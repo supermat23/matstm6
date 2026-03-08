@@ -16,7 +16,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--txt);font-family:'Sora',sans-serif;min-height:100vh;background-image:radial-gradient(ellipse at 10% 0%,rgba(59,130,246,0.08) 0%,transparent 50%),radial-gradient(ellipse at 90% 100%,rgba(16,185,129,0.06) 0%,transparent 50%)}
 .wrap{max-width:960px;margin:0 auto;padding:24px 16px 80px}
-
 /* === Navigation Dossiers === */
 .nav-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:12px 16px;background:var(--sur);border:1px solid var(--brd);border-radius:12px}
 .nav-title{font-family:'DM Serif Display',serif;font-size:18px;color:#fff}
@@ -26,7 +25,8 @@ body{background:var(--bg);color:var(--txt);font-family:'Sora',sans-serif;min-hei
 .nav-btn-secondary{background:transparent;border:1px solid var(--brd2);color:var(--txt2)}
 .nav-btn-secondary:hover{border-color:var(--blue);color:var(--blue2)}
 .nav-btn.active{background:var(--blue);color:#fff}
-
+.nav-btn-support{background:linear-gradient(135deg,#ff6b6b22,#ff475722);border:1px solid rgba(255,71,87,0.4);color:#ff6b6b}
+.nav-btn-support:hover{background:linear-gradient(135deg,#ff6b6b33,#ff475733);border-color:rgba(255,71,87,0.6);transform:translateY(-1px)}
 header{text-align:center;margin-bottom:28px;padding-top:8px}
 .badge{display:inline-flex;align-items:center;gap:7px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2.5px;padding:6px 14px;border-radius:100px;margin-bottom:12px;text-transform:uppercase}
 .badge::before{content:'';width:5px;height:5px;background:var(--blue);border-radius:50%;animation:pulse 2s infinite}
@@ -84,7 +84,6 @@ h1 em{font-style:italic;background:linear-gradient(135deg,var(--blue2),var(--grn
 .prog-wrap{height:3px;background:var(--sur3);border-radius:100px;max-width:320px;margin:8px auto 6px;overflow:hidden}
 .prog-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--blue),var(--grn));width:0%;transition:width 1s linear}
 #chronoStatus{font-family:'DM Mono',monospace;font-size:9px;color:var(--mut);margin-bottom:10px;letter-spacing:0.3px}
-
 /* === BARRE PAUSE + TOUR === */
 .action-bar{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--brd);gap:6px}
 .action-chrono-block{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;min-width:0}
@@ -101,7 +100,6 @@ h1 em{font-style:italic;background:linear-gradient(135deg,var(--blue2),var(--grn
 .btn-tour-sq{background:linear-gradient(135deg,var(--grn),#059669);box-shadow:0 3px 12px rgba(16,185,129,0.3)}
 .btn-tour-sq:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 16px rgba(16,185,129,0.4)}
 /* === FIN BARRE === */
-
 .cbtns{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 .btn{padding:8px 14px;border-radius:8px;border:none;font-family:'Sora',sans-serif;font-size:10px;font-weight:700;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:5px;letter-spacing:.1px}
 .btn svg{width:10px;height:10px;flex-shrink:0}
@@ -143,13 +141,11 @@ h1 em{font-style:italic;background:linear-gradient(135deg,var(--blue2),var(--grn
 .rec-timer{font-family:'DM Mono',monospace;font-size:24px;font-weight:400;color:var(--pur)}
 .rec-prog{height:3px;background:var(--sur3);border-radius:100px;overflow:hidden;margin-top:5px;flex:1;min-width:70px}
 .rec-bar{height:100%;background:linear-gradient(90deg,var(--pur),var(--blue2));width:0%;transition:width 1s linear;border-radius:100px}
-
 /* === NOUVEAU : Champ Remarques === */
 .remarks-section{margin-top:10px}
 .remarks-section .inp{width:100%;background:var(--sur2);border:1px solid var(--brd2);border-radius:8px;color:var(--txt);font-family:'Sora',sans-serif;font-size:13px;padding:10px 12px;outline:none;min-height:80px;resize:vertical}
 .remarks-section .inp:focus{border-color:var(--blue);box-shadow:0 0 0 2px var(--glow)}
 /* === FIN NOUVEAU === */
-
 .res-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
 .res-card{background:var(--sur);border:1px solid var(--brd);border-radius:10px;padding:12px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center}
 .res-card.highlight{background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(16,185,129,0.06));border:2px solid var(--blue)}
@@ -191,21 +187,19 @@ h1 em{font-style:italic;background:linear-gradient(135deg,var(--blue2),var(--grn
 /* === FIN BOUTONS === */
 .btn-calc{width:100%;padding:12px;background:linear-gradient(135deg,var(--blue),#2563eb);border:none;border-radius:10px;color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-bottom:10px;box-shadow:0 5px 20px rgba(59,130,246,0.2)}
 .btn-calc:hover{transform:translateY(-1px);box-shadow:0 7px 25px rgba(59,130,246,0.3)}
-/* === AIDE TECHNIQUE / O2 TOGGLES === */
+/* === AIDE TECHNIQUE / O² TOGGLES === */
 .tog-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--brd2);background:var(--sur2);color:var(--mut);font-family:'Sora',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s}
 .tog-btn.active{background:var(--amb);border-color:var(--amb);color:#000}
 .check-group{display:flex;flex-direction:column;gap:4px}
 .chk-lbl{display:flex;align-items:center;gap:7px;font-family:'Sora',sans-serif;font-size:11px;color:var(--txt2);cursor:pointer;padding:5px 8px;border-radius:6px;transition:background .15s}
 .chk-lbl:hover{background:var(--sur2)}
 .chk-lbl input[type="radio"]{accent-color:var(--amb);width:14px;height:14px;cursor:pointer;flex-shrink:0}
-/* === FIN AIDE/O2 === */
-
+/* === FIN AIDE/O² === */
 .errmsg{display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red2);border-radius:7px;padding:7px 10px;font-size:10px;margin-bottom:6px}
 .errmsg.show{display:flex;align-items:center;gap:6px}
 .errmsg svg{width:12px;height:12px;flex-shrink:0}
 .hidden{display:none!important}
 .divider{height:1px;background:var(--brd);margin:14px 0}
-
 /* === DOSSIERS === */
 .dossiers-section{display:none;position:fixed;inset:0;top:0;background:var(--bg);z-index:100;flex-direction:column;overflow:hidden}
 .dossiers-section.active{display:flex}
@@ -230,7 +224,6 @@ h1 em{font-style:italic;background:linear-gradient(135deg,var(--blue2),var(--grn
 .dossier-empty svg{width:40px;height:40px;margin-bottom:10px;opacity:0.3}
 .dossier-detail-wrap{flex:1;overflow-y:auto;padding:8px 14px}
 /* === FIN DOSSIERS === */
-
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--sur);border:1px solid var(--brd);border-radius:9px;padding:10px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:2000;opacity:0;transition:all .25s cubic-bezier(.4,0,.2,1)}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.err{border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.1)}
@@ -257,6 +250,23 @@ h1 em{font-style:italic;background:linear-gradient(135deg,var(--blue2),var(--grn
 .modal-lap-section .lbl{margin-bottom:6px}
 .modal-btns{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}
 .modal-btns .btn{flex:1}
+/* === SUPPORT MODAL STYLES === */
+.support-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .2s}
+.support-modal-ov.show{opacity:1;visibility:visible}
+.support-modal{background:var(--sur);border:1px solid var(--brd2);border-radius:14px;padding:24px 20px;width:380px;max-width:94vw;box-shadow:0 20px 50px rgba(0,0,0,0.5);transform:scale(.92);transition:transform .2s cubic-bezier(.34,1.56,.64,1);text-align:center}
+.support-modal-ov.show .support-modal{transform:scale(1)}
+.support-modal-icon{font-size:2.5rem;margin-bottom:12px}
+.support-modal-title{font-family:'DM Serif Display',serif;font-size:18px;color:#ff6b6b;margin-bottom:14px}
+.support-modal-text{color:var(--txt2);font-size:13px;line-height:1.6;margin-bottom:14px}
+.support-modal-list{text-align:left;background:var(--sur2);padding:14px 16px;border-radius:10px;margin-bottom:18px}
+.support-modal-list li{list-style:none;padding:6px 0;color:var(--txt);font-size:13px}
+.support-modal-list li::before{content:'✓ ';color:var(--grn2);font-weight:700;margin-right:6px}
+.kofi-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,#ff5e5e,#ff4757);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;transition:all .2s;font-family:'Sora',sans-serif}
+.kofi-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,71,87,0.3)}
+.kofi-btn:active{transform:translateY(0)}
+.support-modal-close{position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--mut);font-size:1.5rem;cursor:pointer;padding:4px}
+.support-modal-close:hover{color:var(--txt)}
+/* === FIN SUPPORT MODAL === */
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes lapFlash{0%,100%{transform:scale(1)}50%{transform:scale(1.06);box-shadow:0 0 20px rgba(16,185,129,0.4)}}
@@ -292,6 +302,9 @@ Nouveau Test
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
 Dossiers
 </button>
+<button class="nav-btn nav-btn-support" onclick="openSupportModal()">
+<span>❤️</span> Supporter
+</button>
 <button id="pwaInstallBtn" class="nav-btn" onclick="installPWA()" style="display:none;background:linear-gradient(135deg,var(--grn),#059669);color:#fff">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 Installer
@@ -299,7 +312,6 @@ Installer
 </div>
 </div>
 <!-- === FIN Navigation === -->
-
 <!-- === SECTION TEST === -->
 <div id="testSection" class="test-section">
 <header>
@@ -307,7 +319,6 @@ Installer
 <h1>Test de Marche <em>6 Minutes</em></h1>
 <p class="sub">Enright & Sherrill (1998) · Monitoring complet · Export PDF</p>
 </header>
-
 <div class="sh"><div class="n">1</div><h2>Donnees patient</h2></div>
 <div class="card cb">
 <div class="patient-header">
@@ -327,10 +338,8 @@ Installer
 </div>
 <div class="eq-box"><div class="eq-f" id="eqDisplay">Selectionnez le sexe pour afficher l'equation</div><div class="eq-n" id="eqNote"></div></div>
 </div>
-
-<div class="sh"><div class="n">2</div><h2>Aide technique &amp; Dispositif O2</h2></div>
+<div class="sh"><div class="n">2</div><h2>Aide technique &amp; Dispositif O²</h2></div>
 <div class="card ca">
-
 <!-- Aide technique -->
 <div style="margin-bottom:12px">
 <div class="lbl" style="margin-bottom:6px"><span class="dot a"></span>Aide technique à la marche</div>
@@ -349,23 +358,22 @@ Installer
 </div>
 </div>
 </div>
-
 <div style="border-top:1px solid var(--brd);padding-top:12px">
-<div class="lbl" style="margin-bottom:6px"><span class="dot a"></span>Dispositif O2</div>
+<div class="lbl" style="margin-bottom:6px"><span class="dot a"></span>Dispositif O²</div>
 <div style="display:flex;gap:6px;margin-bottom:8px">
 <button class="tog-btn" id="togO2Non" onclick="toggleO2(false)">Non</button>
 <button class="tog-btn" id="togO2Oui" onclick="toggleO2(true)">Oui</button>
 </div>
 <div id="o2Options" style="display:none">
-<div class="lbl" style="margin-bottom:5px">Type d'O2</div>
+<div class="lbl" style="margin-bottom:5px">Type d'O²</div>
 <div class="check-group" style="margin-bottom:8px">
-<label class="chk-lbl"><input type="radio" name="o2Type" value="continu" id="o2Continu" onchange="onO2TypeChange()"> O2 continu</label>
-<label class="chk-lbl"><input type="radio" name="o2Type" value="pulse" id="o2Pulse" onchange="onO2TypeChange()"> O2 pulsé</label>
+<label class="chk-lbl"><input type="radio" name="o2Type" value="continu" id="o2Continu" onchange="onO2TypeChange()"> O² Continu</label>
+<label class="chk-lbl"><input type="radio" name="o2Type" value="pulse" id="o2Pulse" onchange="onO2TypeChange()"> O² Pulsé</label>
 </div>
 <div id="o2ContinuFields" style="display:none">
 <div class="g3" style="grid-template-columns:1fr 1fr">
 <div><div class="lbl"><span class="dot a"></span>Débit (L/min)</div><input class="inp" id="o2Debit" type="number" placeholder="2" min="0" max="15" step="0.5"></div>
-<div><div class="lbl"><span class="dot a"></span>Modèle</div><input class="inp" id="o2ModeleContinu" type="text" placeholder="ex: INOGEN..."></div>
+<div><div class="lbl"><span class="dot a"></span>Modèle</div><input class="inp" id="o2ModeleContinu" type="text" placeholder="ex: FREELOX..."></div>
 </div>
 </div>
 <div id="o2PulseFields" style="display:none">
@@ -376,9 +384,7 @@ Installer
 </div>
 </div>
 </div>
-
 </div>
-
 <div class="sh"><div class="n">3</div><h2>Mesures initiales</h2></div>
 <div class="card cg">
 <div class="vitals-inline">
@@ -396,7 +402,6 @@ Installer
 </div>
 </div>
 </div>
-
 <div class="sh"><div class="n">4</div><h2>Chronometre & Tours</h2></div>
 <div class="card cb">
 <div class="lap-cfg">
@@ -420,30 +425,28 @@ Installer
 </div>
 <div class="prog-wrap"><div class="prog-bar" id="chronoBar"></div></div>
 <div id="chronoStatus">Pret a demarrer</div>
-
 <!-- === BARRE PAUSE + TOUR === -->
 <div class="action-bar">
-  <!-- Bouton Pause test -->
-  <button id="btnPauseTest" class="btn-action-sq btn-pause-sq" onclick="togglePauseTest()" disabled title="Pause / Reprendre la pause">
-    <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-  </button>
-  <!-- Chrono Pause -->
-  <div class="action-chrono-block">
-    <span class="action-chrono-label">Pause</span>
-    <span id="pauseTestDisplay" class="action-chrono-val" style="color:var(--amb2)">00:00</span>
-  </div>
-  <!-- Chrono Tour -->
-  <div class="action-chrono-block">
-    <span class="action-chrono-label">Tour</span>
-    <span id="currentLapTime" class="action-chrono-val" style="color:var(--grn2)">00:00</span>
-  </div>
-  <!-- Bouton Tour -->
-  <button id="btnLap" class="btn-action-sq btn-tour-sq" onclick="addLap()" disabled title="Enregistrer un tour">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-  </button>
+<!-- Bouton Pause test -->
+<button id="btnPauseTest" class="btn-action-sq btn-pause-sq" onclick="togglePauseTest()" disabled title="Pause / Reprendre la pause">
+<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+</button>
+<!-- Chrono Pause -->
+<div class="action-chrono-block">
+<span class="action-chrono-label">Pause</span>
+<span id="pauseTestDisplay" class="action-chrono-val" style="color:var(--amb2)">00:00</span>
+</div>
+<!-- Chrono Tour -->
+<div class="action-chrono-block">
+<span class="action-chrono-label">Tour</span>
+<span id="currentLapTime" class="action-chrono-val" style="color:var(--grn2)">00:00</span>
+</div>
+<!-- Bouton Tour -->
+<button id="btnLap" class="btn-action-sq btn-tour-sq" onclick="addLap()" disabled title="Enregistrer un tour">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+</button>
 </div>
 <!-- === FIN BARRE === -->
-
 <div class="cbtns">
 <button id="btnStart" class="btn btn-b" onclick="startChrono()"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>Demarrer</button>
 <button id="btnPause" class="btn btn-a" onclick="pauseChrono()" disabled><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pause</button>
@@ -464,7 +467,6 @@ Installer
 <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--mut)">→ Total : <span id="totalDistDisplay" style="color:var(--grn2);font-weight:600">0 m</span></span>
 </div>
 </div>
-
 <div class="sh"><div class="n">5</div><h2>Monitoring</h2></div>
 <div class="card cg">
 <div class="mon-wrap">
@@ -474,7 +476,6 @@ Installer
 </table>
 </div>
 </div>
-
 <div class="sh"><div class="n">6</div><h2>Mesures finales</h2></div>
 <div class="card ca">
 <div class="vitals-inline">
@@ -492,7 +493,6 @@ Installer
 </div>
 </div>
 </div>
-
 <div class="sh"><div class="n">7</div><h2>Recuperation</h2></div>
 <div class="card cp">
 <div class="rec-section">
@@ -514,11 +514,9 @@ Installer
 </div>
 <!-- === FIN NOUVEAU === -->
 </div>
-
 <div class="sh"><div class="n">8</div><h2>Resultats</h2></div>
 <div class="errmsg" id="errorMsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Renseignez : sexe, age, taille et poids.</span></div>
 <button class="btn-calc" onclick="calculate()">Calculer les resultats</button>
-
 <div id="resultsSection" class="hidden rs">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
 <div style="font-family:'DM Serif Display',serif;font-size:16px;color:#fff">Resultats — <span id="resPatientName">Patient</span></div>
@@ -528,7 +526,7 @@ Installer
 </div>
 </div>
 <div class="res-grid">
-<div class="res-card highlight"><div class="rv" id="resPredit">—</div><div class="rl">Distance predite</div></div>
+<div class="res-card highlight"><div class="rv" id="resPredit">—</div><div class="rl">Distance prédictive</div></div>
 <div class="res-card highlight-grn"><div class="rv grn" id="resReel">—</div><div class="rl">Distance reelle</div></div>
 <div class="rc"><div class="rcl">Ecart</div><div class="rcv" id="resEcart">—</div></div>
 </div>
@@ -541,11 +539,11 @@ Installer
 </div>
 </div>
 <div class="gauge-wrap">
-<div class="lbl" style="margin-bottom:8px"><span class="dot g"></span>% valeur predite</div>
+<div class="lbl" style="margin-bottom:8px"><span class="dot g"></span>% valeur prédictive</div>
 <div class="gbw"><div class="gtrack"></div><div class="gfill" id="gaugeFill"></div><div class="gneedle" id="gaugeNeedle" style="left:0%"></div></div>
 <div class="glabels"><span>0%</span><span>50%</span><span>70%</span><span>100%</span><span>130%</span></div>
 <div class="pct-big" id="resPct">—</div>
-<div class="pct-sub">% de la valeur predite</div>
+<div class="pct-sub">% de la valeur prédictive</div>
 <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:8px;flex-wrap:wrap">
 <div style="text-align:center"><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Limite inferieure</div><div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--red2)" id="resLimInf">—</div><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--mut)">m</div></div>
 </div>
@@ -572,11 +570,8 @@ Installer
 </div>
 </div>
 <!-- === FIN SECTION TEST === -->
-
-
 <!-- TOAST -->
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="toastMsg"></span></div>
-
 <!-- MODAL -->
 <div id="minModal" class="modal-ov">
 <div class="modal-box">
@@ -609,7 +604,26 @@ Tour
 </div>
 </div>
 </div>
-
+<!-- === SUPPORT MODAL === -->
+<div class="support-modal-ov" id="supportModalOv" onclick="closeSupportModal(event)">
+<div class="support-modal" onclick="event.stopPropagation()">
+<button class="support-modal-close" onclick="closeSupportModal()">&times;</button>
+<div class="support-modal-icon">❤️</div>
+<h3 class="support-modal-title">Soutenir TM6</h3>
+<p class="support-modal-text">Je crée des applications médicales utiles et sans publicité intrusive.</p>
+<ul class="support-modal-list">
+<li>Ajouter de nouvelles fonctionnalités</li>
+<li>Maintenir l'application gratuite</li>
+<li>Améliorer les performances</li>
+</ul>
+<p class="support-modal-text" style="font-weight:600;margin-bottom:18px">Merci énormément pour votre aide ☕</p>
+<a href="https://ko-fi.com/supermatv2" target="_blank" class="kofi-btn">
+<svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px"><path d="M20.6 11.3c-.3-.2-.7-.3-1.1-.3h-2.3c-.6 0-1.1.2-1.5.6l-2.8 2.8c-.4.4-.4 1 0 1.4s1 .4 1.4 0l2.1-2.1v4.3c0 .6.4 1 1 1s1-.4 1-1v-5.7c0-.4-.2-.8-.5-1zM6.5 4C4 4 2 6 2 8.5S4 13 6.5 13c1.7 0 3.2-.9 4-2.3.2-.3.1-.7-.2-.9-.3-.2-.7-.1-.9.2-.6 1-1.7 1.6-2.9 1.6-1.7 0-3.1-1.4-3.1-3.1S4.8 5.4 6.5 5.4c1.2 0 2.3.6 2.9 1.6.2.3.6.4.9.2.3-.2.4-.6.2-.9-.8-1.4-2.3-2.3-4-2.3z"/></svg>
+Soutenir sur Ko-fi
+</a>
+</div>
+</div>
+<!-- === FIN SUPPORT MODAL === -->
 <script>
 'use strict';
 var currentSex = null;
@@ -628,7 +642,7 @@ var recovTimer = null;
 var recovRunning = false;
 var recovSec = 180;
 var modalTargetMin = 0;
-// Aide technique & O2
+// Aide technique & O²
 var aideActive = false;
 var o2Active = false;
 // Pauses du test
@@ -651,7 +665,6 @@ var EQ = {
 M:{lbl:'(7.57 × Taille) - (5.02 × Age) - (1.76 × Poids) - 309',note:'ET = 153 m | Valide 40-80 ans',calc:function(a,h,w){return 7.57*h-5.02*a-1.76*w-309;},sd:153},
 F:{lbl:'(2.11 × Taille) - (2.29 × Poids) - (5.78 × Age) + 667',note:'ET = 139 m | Valide 40-80 ans',calc:function(a,h,w){return 2.11*h-2.29*w-5.78*a+667;},sd:139}
 };
-
 document.addEventListener('DOMContentLoaded',function(){
 buildMonTable();
 updateTotal();
@@ -660,7 +673,6 @@ loadDossiers();
 toggleAide(false);
 toggleO2(false);
 });
-
 function fmt(s){
 var m = Math.floor(s/60);
 var sec = s%60;
@@ -678,8 +690,7 @@ toast.className = 'toast ' + (type || '');
 toast.classList.add('show');
 setTimeout(function(){ toast.classList.remove('show'); }, 3000);
 }
-
-// === Aide technique & O2 ===
+// === Aide technique & O² ===
 function toggleAide(state){
 aideActive = state;
 document.getElementById('togAideNon').className = 'tog-btn' + (state ? '' : ' active');
@@ -717,15 +728,12 @@ return {o2:'Oui', o2Type:'Pulse', o2Debit:'', o2Consigne: document.getElementByI
 }
 return {o2:'Oui', o2Type:'', o2Debit:'', o2Consigne:'', o2Modele:''};
 }
-
-
 // === Navigation ===
 function showSection(section){
 var testSec = document.getElementById('testSection');
 var dossiersSec = document.getElementById('dossiersSection');
 var navTest = document.getElementById('navTest');
 var navDossiers = document.getElementById('navDossiers');
-
 if(section === 'test'){
 testSec.classList.remove('hidden');
 testSec.style.display = 'block';
@@ -755,7 +763,25 @@ navTest.classList.remove('nav-btn-primary');
 loadDossiers();
 }
 }
-
+// === SUPPORT MODAL FUNCTIONS ===
+function openSupportModal(){
+document.getElementById('supportModalOv').classList.add('show');
+}
+function closeSupportModal(e){
+if(!e || e.target === e.currentTarget){
+document.getElementById('supportModalOv').classList.remove('show');
+}
+}
+// Close support modal with Escape key
+document.addEventListener('keydown', function(e){
+if(e.key === 'Escape'){
+var supportModal = document.getElementById('supportModalOv');
+if(supportModal && supportModal.classList.contains('show')){
+closeSupportModal();
+}
+}
+});
+// === FIN SUPPORT MODAL FUNCTIONS ===
 // === Gestion des Dossiers ===
 function getDossiers(){
 try{
@@ -763,11 +789,9 @@ var data = localStorage.getItem('tm6_dossiers');
 return data ? JSON.parse(data) : [];
 }catch(e){return [];}
 }
-
 function saveDossiers(dossiers){
 localStorage.setItem('tm6_dossiers', JSON.stringify(dossiers));
 }
-
 function saveRecord(){
 if(!lastResults){
 showToast('Calculez les resultats d\'abord', 'err');
@@ -792,7 +816,6 @@ saveDossiers(dossiers);
 showToast('Dossier enregistre : ' + recordName, 'ok');
 if(navigator.vibrate) navigator.vibrate([50, 30, 50]);
 }
-
 function loadDossiers(){
 var dossiers = getDossiers();
 var list = document.getElementById('dossiersList');
@@ -820,7 +843,6 @@ html += '<div class="dossier-item" onclick="openDossier(\''+d.id+'\')" data-id="
 });
 list.innerHTML = html;
 }
-
 function filterDossiers(){
 var search = document.getElementById('dossierSearch').value.toLowerCase();
 var items = document.querySelectorAll('.dossier-item');
@@ -833,12 +855,10 @@ item.style.display = 'none';
 }
 });
 }
-
 function clearSearch(){
 document.getElementById('dossierSearch').value = '';
 filterDossiers();
 }
-
 // === NOUVEAU : Export tous les dossiers en JSON ===
 function exportAllDossiersJSON(){
 var dossiers = getDossiers();
@@ -858,11 +878,9 @@ linkElement.click();
 showToast(dossiers.length + ' dossier(s) exporte(s)', 'ok');
 }
 // === FIN NOUVEAU ===
-
 function importDossiersJSON(){
 document.getElementById('importFileInput').click();
 }
-
 function handleImportFile(event){
 var file = event.target.files[0];
 if(!file) return;
@@ -898,7 +916,6 @@ event.target.value = '';
 };
 reader.readAsText(file);
 }
-
 function openDossier(id){
 var dossiers = getDossiers();
 var dossier = dossiers.find(function(d){return d.id === id;});
@@ -942,7 +959,7 @@ document.getElementById('detailBody').innerHTML =
 '<tr><td>Taille</td><td>'+r.height+' cm</td></tr>'+
 '<tr><td>Poids</td><td>'+r.weight+' kg</td></tr>'+
 '<tr><td>IMC</td><td>'+r.imc+' kg/m²</td></tr>'+
-'<tr><td>D. predite</td><td>'+Math.round(r.pred)+' m</td></tr>'+
+'<tr><td>D. prédictive</td><td>'+Math.round(r.pred)+' m</td></tr>'+
 '<tr><td>Distance</td><td>'+r.distance+' m</td></tr>'+
 '<tr><td>% VP</td><td>'+(r.distance>0?r.pct.toFixed(0)+'%':'—')+'</td></tr>'+
 '<tr><td>Limite inferieure</td><td>'+(r.limInf!=null?Math.round(r.limInf)+' m':'—')+'</td></tr>'+
@@ -951,13 +968,11 @@ document.getElementById('dossierDetail').classList.remove('hidden');
 document.getElementById('dossiersScrollArea').style.display = 'none';
 window.scrollTo(0, 0);
 }
-
 function closeDossierDetail(){
 document.getElementById('dossierDetail').classList.add('hidden');
 document.getElementById('dossiersScrollArea').style.display = '';
 currentDossierId = null;
 }
-
 function deleteDossier(){
 if(!currentDossierId) return;
 if(!confirm('Supprimer ce dossier definitivement ?')) return;
@@ -968,7 +983,6 @@ closeDossierDetail();
 loadDossiers();
 showToast('Dossier supprime', 'ok');
 }
-
 function exportPDFFromDetail(){
 if(!lastResults){
 showToast('Aucun dossier selectionne', 'err');
@@ -976,15 +990,13 @@ return;
 }
 exportPDF();
 }
-
 function setSex(s){
 currentSex = s;
 document.getElementById('btnM').className = 'sx' + (s==='M'?' am':'');
 document.getElementById('btnF').className = 'sx' + (s==='F'?' af':'');
-document.getElementById('eqDisplay').innerHTML = '<span style="color:var(--grn2)">D predite</span> = '+EQ[s].lbl;
+document.getElementById('eqDisplay').innerHTML = '<span style="color:var(--grn2)">D prédictive</span> = '+EQ[s].lbl;
 document.getElementById('eqNote').textContent = EQ[s].note;
 }
-
 function buildMonTable(){
 var html = '';
 for(var i=0; i<MON.length; i++){
@@ -996,7 +1008,6 @@ html += '<tr><td>'+r.label+'</td>'
 }
 document.getElementById('monBody').innerHTML = html;
 }
-
 function syncPreToTable(){
 var s = document.getElementById('spo2_pre').value;
 var f = document.getElementById('fc_pre_form').value;
@@ -1005,14 +1016,12 @@ var fc = document.getElementById('fc_m_pre');
 if(sp) sp.value = s;
 if(fc) fc.value = f;
 }
-
 function syncM6ToPost(){
 var s = document.getElementById('sp_m6');
 var f = document.getElementById('fc_m6');
 if(s && s.value) document.getElementById('spo2_post_form').value = s.value;
 if(f && f.value) document.getElementById('fc_post_form').value = f.value;
 }
-
 function syncPostToTable(){
 var s = document.getElementById('spo2_post_form').value;
 var f = document.getElementById('fc_post_form').value;
@@ -1021,13 +1030,11 @@ var fc = document.getElementById('fc_m6');
 if(sp && s) sp.value = s;
 if(fc && f) fc.value = f;
 }
-
 function updateTotal(){
 var ld = parseFloat(document.getElementById('lapDist').value) || 0;
 var p = parseFloat(document.getElementById('partialDist').value) || 0;
 document.getElementById('totalDistDisplay').textContent = (laps.length * ld + p) + ' m';
 }
-
 // === CHRONO TOUR EN COURS ===
 function updateCurrentLapTime(){
 if(chronoRunning){
@@ -1036,7 +1043,6 @@ document.getElementById('currentLapTime').textContent = fmt(currentLapElapsed);
 }
 }
 // === FIN CHRONO TOUR ===
-
 function validatePatientData(){
 var age = document.getElementById('age').value;
 var height = document.getElementById('height').value;
@@ -1047,7 +1053,6 @@ return false;
 }
 return true;
 }
-
 function startChrono(){
 if(chronoRunning) return;
 if(!validatePatientData()) return;
@@ -1069,7 +1074,6 @@ currentLapTimer = setInterval(updateCurrentLapTime, 100);
 tickChrono();
 updateCurrentLapTime();
 }
-
 function tickChrono(){
 var now = Date.now();
 chronoElapsed = Math.floor((now - chronoStartTime) / 1000);
@@ -1094,7 +1098,6 @@ disp.className = 'run';
 checkMinuteTriggers();
 if(rem <= 0) stopChrono();
 }
-
 function checkMinuteTriggers(){
 for(var m = 1; m <= 6; m++){
 var threshold = m * 60;
@@ -1105,7 +1108,6 @@ return;
 }
 }
 }
-
 function updateRing(progress){
 var ring = document.getElementById('ringProgress');
 if(ring){
@@ -1114,7 +1116,6 @@ var offset = circumference * (1 - progress);
 ring.style.strokeDashoffset = offset;
 }
 }
-
 function pauseChrono(){
 if(!chronoRunning) return;
 clearInterval(chronoTimer);
@@ -1126,9 +1127,7 @@ document.getElementById('btnStart').disabled = false;
 document.getElementById('btnPause').disabled = true;
 document.getElementById('chronoStatus').textContent = 'En pause';
 }
-
 var testStoppedAt = null; // null = normal finish, number = elapsed seconds at stop
-
 function stopChrono(){
 clearInterval(chronoTimer);
 clearInterval(currentLapTimer);
@@ -1155,7 +1154,6 @@ var distMsg = document.getElementById('totalDistDisplay').textContent;
 showToast(testStoppedAt !== null ? 'Test arrêté à ' + fmt(testStoppedAt) + ' — ' + distMsg : 'Test terminé ! Distance : ' + distMsg, 'ok');
 if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 150]);
 }
-
 function resetChrono(){
 clearInterval(chronoTimer);
 clearInterval(currentLapTimer);
@@ -1195,7 +1193,6 @@ document.getElementById('statDistTours').textContent = '0 m';
 document.getElementById('currentLapTime').textContent = '00:00';
 updateTotal();
 }
-
 function addLap(){
 var lapBtn = document.getElementById('btnLap');
 lapBtn.classList.remove('lap-flash');
@@ -1221,7 +1218,6 @@ document.getElementById('statTours').textContent = laps.length;
 document.getElementById('statDistTours').textContent = td + ' m';
 updateTotal();
 }
-
 function modalAddLap(){
 if(navigator.vibrate) navigator.vibrate(80);
 var ld = parseFloat(document.getElementById('lapDist').value) || 0;
@@ -1243,7 +1239,6 @@ document.getElementById('statDistTours').textContent = td + ' m';
 updateTotal();
 showToast('Tour #' + num + ' enregistre', 'ok');
 }
-
 function togglePauseTest(){
 var btn = document.getElementById('btnPauseTest');
 if(!pauseTestRunning){
@@ -1283,8 +1278,6 @@ pauseTestCurrentSec = 0;
 if(navigator.vibrate) navigator.vibrate([50, 30, 50]);
 }
 }
-
-
 function startRecov(){
 recovRunning = true;
 recovSec = 180;
@@ -1303,7 +1296,6 @@ if(navigator.vibrate) navigator.vibrate([80, 40, 80, 40, 80]);
 }
 }, 1000);
 }
-
 function resetRecov(){
 clearInterval(recovTimer);
 recovTimer = null;
@@ -1313,7 +1305,6 @@ document.getElementById('recovDisplay').textContent = '03:00';
 document.getElementById('recovDisplay').style.color = 'var(--pur)';
 document.getElementById('recovBar').style.width = '0%';
 }
-
 function openModal(min){
 modalTargetMin = min;
 document.getElementById('modalTitle').textContent = 'Minute ' + min + (min===6?' / Fin':'');
@@ -1328,11 +1319,9 @@ document.getElementById('minModal').classList.add('show');
 setTimeout(function(){ document.getElementById('modalSpo2').focus(); }, 120);
 if(navigator.vibrate) navigator.vibrate([50, 30, 50]);
 }
-
 function closeModal(){
 document.getElementById('minModal').classList.remove('show');
 }
-
 function saveModal(){
 var s = document.getElementById('modalSpo2').value;
 var f = document.getElementById('modalFc').value;
@@ -1351,7 +1340,6 @@ updateTotal();
 }
 closeModal();
 }
-
 function calculate(){
 var err = document.getElementById('errorMsg');
 err.classList.remove('show');
@@ -1443,8 +1431,8 @@ document.getElementById('detailsBody').innerHTML =
 +'<tr><td>Poids</td><td>'+r.weight+' kg</td></tr>'
 +'<tr><td>IMC</td><td>'+r.imc+' kg/m²</td></tr>'
 +(r.aide && r.aide === 'Oui' ? '<tr><td style="color:var(--amb2)">Aide technique</td><td style="color:var(--amb2)">'+(r.aideType||'—')+'</td></tr>' : '<tr><td>Aide technique</td><td>Non</td></tr>')
-+(r.o2 && r.o2 === 'Oui' ? '<tr><td style="color:var(--grn2)">Dispositif O2</td><td style="color:var(--grn2)">'+(r.o2Type==='Continu' ? 'Continu '+r.o2Debit+'L/min — '+r.o2Modele : r.o2Type==='Pulse' ? 'Pulse consigne '+r.o2Consigne+' — '+r.o2Modele : '—')+'</td></tr>' : '<tr><td>Dispositif O2</td><td>Non</td></tr>')
-+'<tr><td>D. predite</td><td>'+Math.round(r.pred)+' m</td></tr>'
++(r.o2 && r.o2 === 'Oui' ? '<tr><td style="color:var(--grn2)">Dispositif O²</td><td style="color:var(--grn2)">'+(r.o2Type==='Continu' ? 'Continu '+r.o2Debit+'L/min — '+r.o2Modele : r.o2Type==='Pulse' ? 'Pulse consigne '+r.o2Consigne+' — '+r.o2Modele : '—')+'</td></tr>' : '<tr><td>Dispositif O²</td><td>Non</td></tr>')
++'<tr><td>D. prédictive</td><td>'+Math.round(r.pred)+' m</td></tr>'
 +'<tr><td>ET</td><td>± '+r.sd+' m</td></tr>'
 +'<tr><td>Limite inferieure</td><td>'+Math.round(r.limInf)+' m</td></tr>'
 +'<tr><td>Tours</td><td>'+r.lapsCount+' × '+r.lapDist+'m = '+r.tourDist+'m</td></tr>'
@@ -1461,7 +1449,6 @@ document.getElementById('detailsBody').innerHTML =
 document.getElementById('resultsSection').classList.remove('hidden');
 document.getElementById('resultsSection').scrollIntoView({behavior:'smooth', block:'start'});
 }
-
 function exportPDF(){
 if(!lastResults){
 showToast('Calculez les resultats d\'abord', 'err');
@@ -1477,7 +1464,6 @@ s.onerror = function(){ showToast('Impossible de charger le module PDF', 'err');
 document.head.appendChild(s);
 }
 }
-
 function renderPDF(){
 var r = lastResults;
 var jsPDF = window.jspdf.jsPDF;
@@ -1532,12 +1518,12 @@ doc.setTextColor(30, 30, 30);
 doc.text(String(patientInfo[i][1]), xPos + 25, yPos);
 }
 y += 34;
-// Aide technique & O2 (si applicable)
+// Aide technique & O² (si applicable)
 var aideStr = (r.aide === 'Oui' && r.aideType) ? r.aideType : null;
 var o2Str = null;
 if(r.o2 === 'Oui'){
-if(r.o2Type === 'Continu') o2Str = 'O2 Continu ' + r.o2Debit + ' L/min' + (r.o2Modele ? ' — ' + r.o2Modele : '');
-else if(r.o2Type === 'Pulse') o2Str = 'O2 Pulse consigne ' + r.o2Consigne + (r.o2Modele ? ' — ' + r.o2Modele : '');
+if(r.o2Type === 'Continu') o2Str = 'O² Continu ' + r.o2Debit + ' L/min' + (r.o2Modele ? ' — ' + r.o2Modele : '');
+else if(r.o2Type === 'Pulse') o2Str = 'O² Pulse consigne ' + r.o2Consigne + (r.o2Modele ? ' — ' + r.o2Modele : '');
 }
 if(aideStr || o2Str){
 var infoRowH = 6;
@@ -1555,7 +1541,7 @@ yi += infoRowH;
 }
 if(o2Str){
 doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(16, 120, 80);
-doc.text('Dispositif O2 :', margin + 4, yi);
+doc.text('Dispositif O² :', margin + 4, yi);
 doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(10, 100, 60);
 doc.text(o2Str, margin + 32, yi);
 }
@@ -1573,7 +1559,7 @@ doc.rect(margin, y, pageW - 2*margin, rowH, 'F');
 doc.setFont('helvetica', 'bold');
 doc.setFontSize(7);
 doc.setTextColor(255, 255, 255);
-var headers = ['Distance predite', 'Distance reelle', 'Vitesse moy.', 'Ecart', '% Valeur predite', 'Limite inf.'];
+var headers = ['Distance prédictive', 'Distance reelle', 'Vitesse moy.', 'Ecart', '% Valeur prédictive', 'Limite inf.'];
 headers.forEach(function(h, i){
 doc.text(h, margin + colW * i + colW/2, y + 5, {align:'center'});
 });
@@ -1715,7 +1701,6 @@ doc.text(r.spo2_recov || '—', margin + monColW * 1 + monColW/2, y + 4.5, {alig
 doc.setTextColor(245, 158, 11);
 doc.text(r.fc_recov || '—', margin + monColW * 2 + monColW/2, y + 4.5, {align:'center'});
 y += monRowH + 8;
-
 // === NOUVEAU : Remarques dans le PDF ===
 if(r.remarks && r.remarks.trim() !== ''){
 doc.setFont('helvetica', 'bold');
@@ -1734,7 +1719,6 @@ doc.text(splitRemarks, margin + 4, y + 6);
 y += remarksHeight + 6;
 }
 // === FIN NOUVEAU ===
-
 doc.setFont('helvetica', 'bold');
 doc.setFontSize(10);
 doc.setTextColor(59, 130, 246);
@@ -1811,11 +1795,9 @@ fileName = 'TM6_' + dossier.name + '.pdf';
 }
 doc.save(fileName);
 }
-
 document.getElementById('minModal').addEventListener('click', function(e){
 if(e.target === this) closeModal();
 });
-
 document.addEventListener('keydown', function(e){
 if(e.key === 'Escape'){
 closeModal();
@@ -1823,43 +1805,38 @@ if(currentDossierId) closeDossierDetail();
 }
 });
 </script>
-
 <script>
 // === PWA : Bouton Install ===
 var deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', function(e){
-  e.preventDefault();
-  deferredPrompt = e;
-  var installBtn = document.getElementById('pwaInstallBtn');
-  if(installBtn) installBtn.style.display = 'inline-flex';
+e.preventDefault();
+deferredPrompt = e;
+var installBtn = document.getElementById('pwaInstallBtn');
+if(installBtn) installBtn.style.display = 'inline-flex';
 });
 window.addEventListener('appinstalled', function(){
-  deferredPrompt = null;
-  var installBtn = document.getElementById('pwaInstallBtn');
-  if(installBtn) installBtn.style.display = 'none';
-  showToast('Application installée avec succès !', 'ok');
+deferredPrompt = null;
+var installBtn = document.getElementById('pwaInstallBtn');
+if(installBtn) installBtn.style.display = 'none';
+showToast('Application installée avec succès !', 'ok');
 });
 function installPWA(){
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(function(result){
-    if(result.outcome === 'accepted') showToast('Installation en cours…', 'ok');
-    deferredPrompt = null;
-  });
+if(!deferredPrompt) return;
+deferredPrompt.prompt();
+deferredPrompt.userChoice.then(function(result){
+if(result.outcome === 'accepted') showToast('Installation en cours…', 'ok');
+deferredPrompt = null;
+});
 }
-
 // === PWA : Service Worker ===
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js', {scope:'./'})
-    .then(function(reg){ console.log('[TM6 PWA] SW enregistré', reg.scope); })
-    .catch(function(e){ console.warn('[TM6 PWA] SW échec:', e); });
+navigator.serviceWorker.register('./sw.js', {scope:'./'})
+.then(function(reg){ console.log('[TM6 PWA] SW enregistré', reg.scope); })
+.catch(function(e){ console.warn('[TM6 PWA] SW échec:', e); });
 }
 </script>
-
-
 <!-- === SECTION DOSSIERS === -->
 <div id="dossiersSection" class="dossiers-section">
-
 <div class="dossiers-top">
 <div class="dossiers-toolbar">
 <div class="search-bar">
@@ -1871,12 +1848,10 @@ if('serviceWorker' in navigator){
 <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImportFile(event)">
 </div>
 </div>
-
 <!-- Liste scrollable -->
 <div class="dossiers-scroll" id="dossiersScrollArea">
 <div class="dossiers-list" id="dossiersList"></div>
 </div>
-
 <!-- Vue détail d'un dossier -->
 <div id="dossierDetail" class="hidden dossier-detail-wrap">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
@@ -1888,16 +1863,16 @@ if('serviceWorker' in navigator){
 </div>
 </div>
 <div class="res-grid">
-<div class="res-card highlight"><div class="rv" id="detailPredit">—</div><div class="rl">Distance predite</div></div>
+<div class="res-card highlight"><div class="rv" id="detailPredit">—</div><div class="rl">Distance prédictive</div></div>
 <div class="res-card highlight-grn"><div class="rv grn" id="detailReel">—</div><div class="rl">Distance reelle</div></div>
 <div class="rc"><div class="rcl">Ecart</div><div class="rcv" id="detailEcart">—</div></div>
 </div>
 <div class="gauge-wrap">
-<div class="lbl" style="margin-bottom:8px"><span class="dot g"></span>% valeur predite</div>
+<div class="lbl" style="margin-bottom:8px"><span class="dot g"></span>% valeur prédictive</div>
 <div class="gbw"><div class="gtrack"></div><div class="gfill" id="detailGaugeFill"></div><div class="gneedle" id="detailGaugeNeedle" style="left:0%"></div></div>
 <div class="glabels"><span>0%</span><span>50%</span><span>70%</span><span>100%</span><span>130%</span></div>
 <div class="pct-big" id="detailPct">—</div>
-<div class="pct-sub">% de la valeur predite</div>
+<div class="pct-sub">% de la valeur prédictive</div>
 <div class="interp" id="detailInterpretation"></div>
 </div>
 <div class="card" style="margin-bottom:8px">
