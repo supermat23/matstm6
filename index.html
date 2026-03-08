@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070b12">
+<meta name="description" content="Test de Marche 6 Minutes — Calcul et monitoring TM6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TM6">
+<link rel="manifest" href="./manifest.json">
+<title>TM6 — Test de Marche 6 Minutes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b12;--sur:#0d1320;--sur2:#131b2e;--sur3:#1a2438;--brd:#1e2d47;--brd2:#2a3f5f;--blue:#3b82f6;--blue2:#60a5fa;--blue3:#93c5fd;--grn:#10b981;--grn2:#34d399;--amb:#f59e0b;--amb2:#fcd34d;--red:#ef4444;--red2:#fca5a5;--pur:#8b5cf6;--pur2:#a78bfa;--txt:#e2e8f0;--txt2:#94a3b8;--mut:#4b5e78;--glow:rgba(59,130,246,0.2)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Sora',sans-serif;min-height:100vh;background-image:radial-gradient(ellipse at 10% 0%,rgba(59,130,246,0.08) 0%,transparent 50%),radial-gradient(ellipse at 90% 100%,rgba(16,185,129,0.06) 0%,transparent 50%)}
+.wrap{max-width:960px;margin:0 auto;padding:24px 16px 80px}
+
+/* === Navigation Dossiers === */
+.nav-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:12px 16px;background:var(--sur);border:1px solid var(--brd);border-radius:12px}
+.nav-title{font-family:'DM Serif Display',serif;font-size:18px;color:#fff}
+.nav-btn{padding:8px 16px;border-radius:8px;border:none;font-family:'Sora',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.nav-btn-primary{background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff}
+.nav-btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,130,246,0.3)}
+.nav-btn-secondary{background:transparent;border:1px solid var(--brd2);color:var(--txt2)}
+.nav-btn-secondary:hover{border-color:var(--blue);color:var(--blue2)}
+.nav-btn.active{background:var(--blue);color:#fff}
+
+header{text-align:center;margin-bottom:28px;padding-top:8px}
+.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2.5px;padding:6px 14px;border-radius:100px;margin-bottom:12px;text-transform:uppercase}
+.badge::before{content:'';width:5px;height:5px;background:var(--blue);border-radius:50%;animation:pulse 2s infinite}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(1.5rem,4.5vw,2.4rem);line-height:1.15;color:#fff}
+h1 em{font-style:italic;background:linear-gradient(135deg,var(--blue2),var(--grn));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{color:var(--mut);font-size:11px;margin-top:5px;font-weight:300;letter-spacing:0.3px}
+.sh{display:flex;align-items:center;gap:10px;margin:24px 0 10px}
+.sh .n{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#2563eb);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:#fff}
+.sh h2{font-size:13px;font-weight:700;color:#fff}
+.sh small{font-size:9px;color:var(--mut);font-family:'DM Mono',monospace;margin-left:2px}
+.card{background:var(--sur);border:1px solid var(--brd);border-radius:12px;padding:14px 16px;margin-bottom:8px;position:relative;overflow:hidden}
+.card.cb::before,.card.cg::before,.card.ca::before,.card.cp::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.card.cb::before{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.card.cg::before{background:linear-gradient(90deg,transparent,var(--grn),transparent)}
+.card.ca::before{background:linear-gradient(90deg,transparent,var(--amb),transparent)}
+.card.cp::before{background:linear-gradient(90deg,transparent,var(--pur),transparent)}
+.lbl{font-family:'DM Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);margin-bottom:3px;display:flex;align-items:center;gap:4px}
+.dot{width:3px;height:3px;border-radius:50%;flex-shrink:0}
+.dot.b{background:var(--blue)}.dot.g{background:var(--grn)}.dot.a{background:var(--amb)}.dot.p{background:var(--pur)}
+.inp{width:100%;background:var(--sur2);border:1px solid var(--brd2);border-radius:7px;color:var(--txt);font-family:'DM Mono',monospace;font-size:14px;padding:7px 9px;outline:none;transition:border-color .2s,box-shadow .2s}
+.inp:focus{border-color:var(--blue);box-shadow:0 0 0 2px var(--glow)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.patient-header{display:flex;gap:10px;align-items:flex-end;margin-bottom:10px}
+.patient-name{flex:1}
+.patient-name .inp{font-size:16px;padding:10px 12px}
+.sex-row{display:flex;gap:6px}
+.sx{padding:10px 12px;border:2px solid var(--brd);border-radius:9px;background:var(--sur);color:var(--mut);cursor:pointer;font-family:'Sora',sans-serif;font-size:11px;font-weight:600;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.sx:hover{border-color:var(--blue2);color:var(--txt)}
+.sx.am{border-color:var(--blue);background:rgba(59,130,246,0.1);color:var(--blue2)}
+.sx.af{border-color:var(--grn);background:rgba(16,185,129,0.1);color:var(--grn2)}
+.sx svg{width:14px;height:14px;flex-shrink:0}
+.eq-box{background:var(--sur2);border:1px solid var(--brd);border-radius:8px;padding:8px 12px;margin-top:8px}
+.eq-f{font-family:'DM Mono',monospace;font-size:9px;color:var(--blue3);line-height:1.5;border-left:2px solid var(--blue);padding-left:8px}
+.eq-n{margin-top:4px;font-size:8px;color:var(--mut);line-height:1.4;font-family:'DM Mono',monospace}
+.vitals-inline{display:flex;gap:8px;align-items:stretch;flex-wrap:nowrap;width:100%}
+.vblock{flex:1;min-width:0;display:flex;flex-direction:column}
+.vblock .lbl{margin-bottom:3px;white-space:nowrap}
+.vblock .inp{flex:1;font-size:16px;padding:8px;text-align:center}
+.chrono-card{background:linear-gradient(145deg,var(--sur2),var(--sur));border:1px solid var(--brd2);border-radius:14px;padding:20px 18px;text-align:center;position:relative;overflow:hidden}
+.chrono-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -30%,rgba(59,130,246,0.1),transparent 60%);pointer-events:none}
+.chrono-display-wrap{display:flex;align-items:center;justify-content:center;gap:24px;margin-bottom:12px}
+.chrono-main{position:relative}
+#chronoDisplay{font-family:'DM Mono',monospace;font-size:clamp(42px,12vw,64px);font-weight:400;letter-spacing:-1px;line-height:1;color:#fff;transition:color .3s,text-shadow .3s}
+#chronoDisplay.run{color:var(--blue2);text-shadow:0 0 40px rgba(59,130,246,0.4)}
+#chronoDisplay.done{color:var(--grn2);text-shadow:0 0 40px rgba(16,185,129,0.4)}
+#chronoDisplay.warn{color:var(--amb2);text-shadow:0 0 30px rgba(245,158,11,0.4);animation:chronoPulse 0.8s infinite}
+@keyframes chronoPulse{0%,100%{opacity:1}50%{opacity:0.7}}
+.chrono-progress-ring{width:70px;height:70px;position:relative;flex-shrink:0}
+.ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--sur3);stroke-width:4}
+.ring-progress{fill:none;stroke:url(#ringGrad);stroke-width:4;stroke-linecap:round;stroke-dasharray:188.5;stroke-dashoffset:188.5;transition:stroke-dashoffset 0.3s ease}
+.ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.ring-pct{font-family:'DM Mono',monospace;font-size:11px;color:var(--txt2)}
+.prog-wrap{height:3px;background:var(--sur3);border-radius:100px;max-width:320px;margin:8px auto 6px;overflow:hidden}
+.prog-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--blue),var(--grn));width:0%;transition:width 1s linear}
+#chronoStatus{font-family:'DM Mono',monospace;font-size:9px;color:var(--mut);margin-bottom:10px;letter-spacing:0.3px}
+
+/* === BARRE PAUSE + TOUR === */
+.action-bar{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--brd);gap:6px}
+.action-chrono-block{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;min-width:0}
+.action-chrono-label{font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);white-space:nowrap}
+.action-chrono-val{font-family:'DM Mono',monospace;font-size:clamp(18px,5vw,28px);font-weight:400;letter-spacing:-1px;line-height:1}
+.btn-action-sq{width:52px;height:52px;border-radius:11px;color:#fff;border:none;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-action-sq svg{width:24px;height:24px;stroke-width:2.5}
+.btn-action-sq:active:not(:disabled){transform:scale(.95)}
+.btn-action-sq:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-pause-sq{background:linear-gradient(135deg,var(--amb),#d97706);box-shadow:0 3px 12px rgba(245,158,11,0.3)}
+.btn-pause-sq:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 16px rgba(245,158,11,0.4)}
+.btn-pause-sq.active{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 3px 12px rgba(239,68,68,0.3);animation:pauseBlink 1s infinite}
+@keyframes pauseBlink{0%,100%{opacity:1}50%{opacity:.7}}
+.btn-tour-sq{background:linear-gradient(135deg,var(--grn),#059669);box-shadow:0 3px 12px rgba(16,185,129,0.3)}
+.btn-tour-sq:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 5px 16px rgba(16,185,129,0.4)}
+/* === FIN BARRE === */
+
+.cbtns{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.btn{padding:8px 14px;border-radius:8px;border:none;font-family:'Sora',sans-serif;font-size:10px;font-weight:700;cursor:pointer;transition:all .18s;display:inline-flex;align-items:center;gap:5px;letter-spacing:.1px}
+.btn svg{width:10px;height:10px;flex-shrink:0}
+.btn-b{background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;box-shadow:0 3px 12px rgba(59,130,246,0.25)}
+.btn-b:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(59,130,246,0.35)}
+.btn-g{background:linear-gradient(135deg,var(--grn),#059669);color:#fff;box-shadow:0 3px 12px rgba(16,185,129,0.2)}
+.btn-g:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(16,185,129,0.3)}
+.btn-a{background:linear-gradient(135deg,var(--amb),#d97706);color:#fff;box-shadow:0 3px 12px rgba(245,158,11,0.2)}
+.btn-a:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(245,158,11,0.25)}
+.btn-r{background:linear-gradient(135deg,var(--red),#dc2626);color:#fff;box-shadow:0 3px 12px rgba(239,68,68,0.2)}
+.btn-r:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 16px rgba(239,68,68,0.25)}
+.btn-o{background:transparent;border:1px solid var(--brd2);color:var(--txt2)}
+.btn-o:hover:not(:disabled){border-color:var(--blue);color:var(--blue2)}
+.btn:active:not(:disabled){transform:scale(.97)!important}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.lap-cfg{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;background:var(--sur2);padding:8px 12px;border-radius:8px;border:1px solid var(--brd)}
+.lap-cfg .lbl{margin-bottom:0}
+.lap-cfg input{width:60px;background:var(--sur3);border:1px solid var(--brd);border-radius:6px;color:var(--txt);font-family:'DM Mono',monospace;font-size:14px;padding:5px 7px;outline:none;text-align:center}
+.lap-cfg input:focus{border-color:var(--blue)}
+.lap-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.lst{background:var(--sur2);border:1px solid var(--brd);border-radius:8px;padding:8px;text-align:center}
+.lst .lv{font-family:'DM Mono',monospace;font-size:18px;font-weight:400}
+.lst .ll{font-size:7px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;font-family:'DM Mono',monospace;margin-top:1px}
+.laps-list{max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.lap-row{display:grid;grid-template-columns:24px 1fr 1fr 1fr;gap:5px;align-items:center;padding:5px 8px;border-radius:6px;background:var(--sur2);border:1px solid var(--brd);font-family:'DM Mono',monospace;font-size:9px;animation:fadeUp .25s ease}
+.partial-input{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;background:var(--sur2);padding:8px 12px;border-radius:8px;border:1px solid var(--brd)}
+.partial-input .inp{width:70px}
+.mon-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.mon-t{width:100%;border-collapse:collapse;table-layout:fixed}
+.mon-t th{background:var(--sur2);padding:6px 4px;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);text-align:center;border-bottom:1px solid var(--brd)}
+.mon-t th:first-child{text-align:left;padding-left:9px;width:28%}
+.mon-t th:not(:first-child){width:36%}
+.mon-t td{padding:5px 4px;border-bottom:1px solid rgba(30,45,71,0.4);text-align:center}
+.mon-t td:first-child{font-family:'DM Mono',monospace;font-size:9px;color:var(--mut);text-align:left;padding-left:9px}
+.mon-t tr:hover td{background:rgba(255,255,255,0.01)}
+.mon-t input{width:100%;background:var(--sur3);border:1px solid var(--brd);border-radius:5px;color:var(--txt);font-family:'DM Mono',monospace;font-size:13px;padding:5px 2px;outline:none;text-align:center;box-sizing:border-box}
+.mon-t input:focus{border-color:var(--blue)}
+.rec-section{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.rec-timer{font-family:'DM Mono',monospace;font-size:24px;font-weight:400;color:var(--pur)}
+.rec-prog{height:3px;background:var(--sur3);border-radius:100px;overflow:hidden;margin-top:5px;flex:1;min-width:70px}
+.rec-bar{height:100%;background:linear-gradient(90deg,var(--pur),var(--blue2));width:0%;transition:width 1s linear;border-radius:100px}
+
+/* === NOUVEAU : Champ Remarques === */
+.remarks-section{margin-top:10px}
+.remarks-section .inp{width:100%;background:var(--sur2);border:1px solid var(--brd2);border-radius:8px;color:var(--txt);font-family:'Sora',sans-serif;font-size:13px;padding:10px 12px;outline:none;min-height:80px;resize:vertical}
+.remarks-section .inp:focus{border-color:var(--blue);box-shadow:0 0 0 2px var(--glow)}
+/* === FIN NOUVEAU === */
+
+.res-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.res-card{background:var(--sur);border:1px solid var(--brd);border-radius:10px;padding:12px 14px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.res-card.highlight{background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(16,185,129,0.06));border:2px solid var(--blue)}
+.res-card.highlight-grn{background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.04));border:3px solid var(--grn)}
+.res-card .rv{font-family:'DM Mono',monospace;font-size:24px;font-weight:400;line-height:1;margin-bottom:4px}
+.res-card .rl{font-size:7px;color:var(--mut);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1.2px}
+.res-card.highlight .rv{color:var(--blue2)}
+.res-card .rv.grn{color:var(--grn2)}
+.rc{background:var(--sur);border:1px solid var(--brd);border-radius:8px;padding:8px 10px}
+.rc .rcl{font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mut);margin-bottom:2px}
+.rc .rcv{font-family:'DM Mono',monospace;font-size:16px;font-weight:400;color:#fff}
+.gauge-wrap{background:var(--sur);border:1px solid var(--brd);border-radius:10px;padding:14px;margin-bottom:8px}
+.gbw{position:relative;height:8px;background:var(--sur2);border-radius:100px;overflow:visible;margin-bottom:5px}
+.gtrack{position:absolute;inset:0;border-radius:100px;background:linear-gradient(90deg,var(--red),var(--amb),var(--grn));opacity:.12}
+.gfill{position:absolute;left:0;top:0;bottom:0;border-radius:100px;background:linear-gradient(90deg,var(--red),var(--amb),var(--grn));transition:width 1s cubic-bezier(.4,0,.2,1);width:0%}
+.gneedle{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:#fff;border-radius:50%;box-shadow:0 0 0 2px var(--bg),0 0 8px rgba(255,255,255,.25);transition:left 1s cubic-bezier(.4,0,.2,1)}
+.glabels{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:7px;color:var(--mut)}
+.pct-big{font-family:'DM Serif Display',serif;font-size:36px;color:#fff;text-align:center;line-height:1;margin-top:8px}
+.pct-sub{font-size:7px;color:var(--mut);text-align:center;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.8px}
+.interp{text-align:center;padding:6px 12px;border-radius:7px;font-size:10px;font-weight:600;margin-top:6px}
+.interp.low{background:rgba(239,68,68,0.1);color:var(--red2);border:1px solid rgba(239,68,68,0.2)}
+.interp.mid{background:rgba(245,158,11,0.1);color:var(--amb2);border:1px solid rgba(245,158,11,0.2)}
+.interp.good{background:rgba(16,185,129,0.1);color:var(--grn2);border:1px solid rgba(16,185,129,0.2)}
+.det-t{width:100%;border-collapse:collapse}
+.det-t th{background:var(--sur2);padding:5px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:1px;color:var(--mut)}
+.det-t td{padding:5px 8px;border-top:1px solid var(--brd);font-size:10px;color:var(--txt)}
+.det-t td:last-child{font-family:'DM Mono',monospace;text-align:right;color:var(--blue3)}
+.btn-pdf{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;background:transparent;border:1px solid var(--blue);border-radius:7px;color:var(--blue2);font-family:'Sora',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-pdf:hover{background:rgba(59,130,246,0.1)}
+.btn-pdf svg{width:11px;height:11px}
+/* === Bouton Enregistrer === */
+.btn-save{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;background:linear-gradient(135deg,var(--grn),#059669);border:none;border-radius:7px;color:#fff;font-family:'Sora',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(16,185,129,0.2)}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(16,185,129,0.3)}
+.btn-save svg{width:11px;height:11px}
+/* === Bouton Export JSON === */
+.btn-json{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;background:linear-gradient(135deg,var(--pur),#7c3aed);border:none;border-radius:7px;color:#fff;font-family:'Sora',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(139,92,246,0.2)}
+.btn-json:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(139,92,246,0.3)}
+.btn-json svg{width:11px;height:11px}
+/* === FIN BOUTONS === */
+.btn-calc{width:100%;padding:12px;background:linear-gradient(135deg,var(--blue),#2563eb);border:none;border-radius:10px;color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-bottom:10px;box-shadow:0 5px 20px rgba(59,130,246,0.2)}
+.btn-calc:hover{transform:translateY(-1px);box-shadow:0 7px 25px rgba(59,130,246,0.3)}
+/* === AIDE TECHNIQUE / O2 TOGGLES === */
+.tog-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--brd2);background:var(--sur2);color:var(--mut);font-family:'Sora',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .15s}
+.tog-btn.active{background:var(--amb);border-color:var(--amb);color:#000}
+.check-group{display:flex;flex-direction:column;gap:4px}
+.chk-lbl{display:flex;align-items:center;gap:7px;font-family:'Sora',sans-serif;font-size:11px;color:var(--txt2);cursor:pointer;padding:5px 8px;border-radius:6px;transition:background .15s}
+.chk-lbl:hover{background:var(--sur2)}
+.chk-lbl input[type="radio"]{accent-color:var(--amb);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+/* === FIN AIDE/O2 === */
+
+.errmsg{display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red2);border-radius:7px;padding:7px 10px;font-size:10px;margin-bottom:6px}
+.errmsg.show{display:flex;align-items:center;gap:6px}
+.errmsg svg{width:12px;height:12px;flex-shrink:0}
+.hidden{display:none!important}
+.divider{height:1px;background:var(--brd);margin:14px 0}
+
+/* === DOSSIERS === */
+.dossiers-section{display:none;position:fixed;inset:0;top:0;background:var(--bg);z-index:100;flex-direction:column;overflow:hidden}
+.dossiers-section.active{display:flex}
+.test-section{display:block}
+.test-section.hidden{display:none}
+.dossiers-top{flex-shrink:0;padding:8px 16px;border-bottom:1px solid var(--brd);background:var(--bg)}
+.dossiers-toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.search-bar{display:flex;gap:6px;flex:1;min-width:180px}
+.search-bar input{flex:1;background:var(--sur2);border:1px solid var(--brd2);border-radius:7px;color:var(--txt);font-family:'Sora',sans-serif;font-size:12px;padding:7px 10px;outline:none;min-width:0}
+.search-bar input:focus{border-color:var(--blue);box-shadow:0 0 0 2px var(--glow)}
+.dossiers-scroll{flex:1;overflow-y:auto;padding:8px 14px}
+.dossiers-list{display:flex;flex-direction:column;gap:4px}
+.dossier-item{display:grid;grid-template-columns:1fr auto;align-items:center;padding:8px 10px;background:var(--sur);border:1px solid var(--brd);border-radius:7px;cursor:pointer;transition:all .15s;gap:8px}
+.dossier-item:hover{border-color:var(--blue);background:var(--sur2)}
+.dossier-item.selected{border-color:var(--blue);background:rgba(59,130,246,0.08)}
+.dossier-info{display:flex;flex-direction:column;gap:1px;min-width:0}
+.dossier-name{font-family:'Sora',sans-serif;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dossier-meta{font-family:'DM Mono',monospace;font-size:8px;color:var(--mut);display:flex;gap:8px;flex-wrap:wrap}
+.dossier-actions{display:flex;gap:4px;flex-shrink:0}
+.dossier-actions .btn{padding:4px 8px;font-size:9px}
+.dossier-empty{text-align:center;padding:40px 20px;color:var(--mut)}
+.dossier-empty svg{width:40px;height:40px;margin-bottom:10px;opacity:0.3}
+.dossier-detail-wrap{flex:1;overflow-y:auto;padding:8px 14px}
+/* === FIN DOSSIERS === */
+
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--sur);border:1px solid var(--brd);border-radius:9px;padding:10px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:2000;opacity:0;transition:all .25s cubic-bezier(.4,0,.2,1)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.err{border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.1)}
+.toast.ok{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.1)}
+.toast svg{width:16px;height:16px;flex-shrink:0}
+.toast.err svg{color:var(--red2)}
+.toast.ok svg{color:var(--grn2)}
+.toast span{font-size:11px;color:var(--txt)}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .2s}
+.modal-ov.show{opacity:1;visibility:visible}
+.modal-box{background:var(--sur);border:1px solid var(--brd2);border-radius:14px;padding:18px 20px;width:340px;max-width:94vw;box-shadow:0 20px 50px rgba(0,0,0,0.5);transform:scale(.92);transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.modal-ov.show .modal-box{transform:scale(1)}
+.modal-box h3{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;margin-bottom:2px}
+.modal-box .msub{font-family:'DM Mono',monospace;font-size:8px;color:var(--mut);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px}
+.modal-chrono{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--sur2);border-radius:10px;padding:12px;margin-bottom:12px}
+.modal-chrono-display{font-family:'DM Mono',monospace;font-size:36px;font-weight:400;color:var(--blue2)}
+.modal-chrono-label{font-family:'DM Mono',monospace;font-size:8px;color:var(--mut);text-align:center;margin-top:4px}
+.modal-fields{display:flex;gap:8px;margin-bottom:10px}
+.mf{flex:1}
+.mf .lbl{margin-bottom:4px}
+.mf input{width:100%;background:var(--sur2);border:1px solid var(--brd2);border-radius:7px;color:var(--txt);font-family:'DM Mono',monospace;font-size:22px;padding:8px 10px;outline:none;text-align:center}
+.mf input:focus{border-color:var(--blue);box-shadow:0 0 0 2px var(--glow)}
+.modal-lap-section{background:var(--sur2);border-radius:8px;padding:10px;margin-bottom:10px}
+.modal-lap-section .lbl{margin-bottom:6px}
+.modal-btns{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}
+.modal-btns .btn{flex:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes lapFlash{0%,100%{transform:scale(1)}50%{transform:scale(1.06);box-shadow:0 0 20px rgba(16,185,129,0.4)}}
+.lap-flash{animation:lapFlash .25s ease!important}
+.rs{animation:fadeUp .35s ease both}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
+@media(max-width:580px){
+.g3{grid-template-columns:repeat(3,1fr);gap:6px}
+.lap-stats{grid-template-columns:repeat(3,1fr)}
+.res-grid{grid-template-columns:1fr 1fr}
+.vitals-inline{gap:4px}
+.vblock .inp{font-size:14px;padding:6px}
+.patient-header{flex-direction:column;align-items:stretch}
+.nav-bar{flex-direction:column;gap:10px}
+.nav-btn{width:100%;justify-content:center}
+.current-lap-section{flex-direction:column;gap:8px}
+.current-lap-time{text-align:center;min-width:auto}
+}
+@media(max-width:360px){.g3{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<!-- === Barre de Navigation === -->
+<div class="nav-bar">
+<div class="nav-title">TM6 — Test de Marche</div>
+<div style="display:flex;gap:8px">
+<button class="nav-btn nav-btn-primary active" id="navTest" onclick="showSection('test')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+Nouveau Test
+</button>
+<button class="nav-btn nav-btn-secondary" id="navDossiers" onclick="showSection('dossiers')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+Dossiers
+</button>
+<button id="pwaInstallBtn" class="nav-btn" onclick="installPWA()" style="display:none;background:linear-gradient(135deg,var(--grn),#059669);color:#fff">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+Installer
+</button>
+</div>
+</div>
+<!-- === FIN Navigation === -->
+
+<!-- === SECTION TEST === -->
+<div id="testSection" class="test-section">
+<header>
+<div class="badge">TM6 · Evaluation Clinique</div>
+<h1>Test de Marche <em>6 Minutes</em></h1>
+<p class="sub">Enright & Sherrill (1998) · Monitoring complet · Export PDF</p>
+</header>
+
+<div class="sh"><div class="n">1</div><h2>Donnees patient</h2></div>
+<div class="card cb">
+<div class="patient-header">
+<div class="patient-name">
+<div class="lbl"><span class="dot b"></span>Nom du patient</div>
+<input class="inp" id="patientName" type="text" placeholder="Entrez le nom...">
+</div>
+<div class="sex-row">
+<button class="sx" id="btnM" onclick="setSex('M')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a8 8 0 0 0-16 0v2"/></svg>Homme</button>
+<button class="sx" id="btnF" onclick="setSex('F')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M12 13v8M9 18h6"/></svg>Femme</button>
+</div>
+</div>
+<div class="g3">
+<div><div class="lbl"><span class="dot b"></span>Age</div><input class="inp" id="age" type="number" placeholder="65" min="40" max="80"></div>
+<div><div class="lbl"><span class="dot b"></span>Taille</div><input class="inp" id="height" type="number" placeholder="170" min="100" max="220"></div>
+<div><div class="lbl"><span class="dot b"></span>Poids</div><input class="inp" id="weight" type="number" placeholder="70" min="30" max="200"></div>
+</div>
+<div class="eq-box"><div class="eq-f" id="eqDisplay">Selectionnez le sexe pour afficher l'equation</div><div class="eq-n" id="eqNote"></div></div>
+</div>
+
+<div class="sh"><div class="n">2</div><h2>Aide technique &amp; Dispositif O2</h2></div>
+<div class="card ca">
+
+<!-- Aide technique -->
+<div style="margin-bottom:12px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot a"></span>Aide technique à la marche</div>
+<div style="display:flex;gap:6px;margin-bottom:8px">
+<button class="tog-btn" id="togAideNon" onclick="toggleAide(false)">Non</button>
+<button class="tog-btn" id="togAideOui" onclick="toggleAide(true)">Oui</button>
+</div>
+<div id="aideOptions" style="display:none">
+<div class="lbl" style="margin-bottom:5px">Type d'aide</div>
+<div class="check-group" id="aideTypeGroup">
+<label class="chk-lbl"><input type="radio" name="aideType" value="Canne simple" onchange="onAideChange()"> Canne simple</label>
+<label class="chk-lbl"><input type="radio" name="aideType" value="Canne anglaise" onchange="onAideChange()"> Canne anglaise</label>
+<label class="chk-lbl"><input type="radio" name="aideType" value="Déambulateur" onchange="onAideChange()"> Déambulateur</label>
+<label class="chk-lbl"><input type="radio" name="aideType" value="Déambulateur 2 roues" onchange="onAideChange()"> Déambulateur 2 roues</label>
+<label class="chk-lbl"><input type="radio" name="aideType" value="Déambulateur 4 roues" onchange="onAideChange()"> Déambulateur 4 roues</label>
+</div>
+</div>
+</div>
+
+<div style="border-top:1px solid var(--brd);padding-top:12px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot a"></span>Dispositif O2</div>
+<div style="display:flex;gap:6px;margin-bottom:8px">
+<button class="tog-btn" id="togO2Non" onclick="toggleO2(false)">Non</button>
+<button class="tog-btn" id="togO2Oui" onclick="toggleO2(true)">Oui</button>
+</div>
+<div id="o2Options" style="display:none">
+<div class="lbl" style="margin-bottom:5px">Type d'O2</div>
+<div class="check-group" style="margin-bottom:8px">
+<label class="chk-lbl"><input type="radio" name="o2Type" value="continu" id="o2Continu" onchange="onO2TypeChange()"> O2 continu</label>
+<label class="chk-lbl"><input type="radio" name="o2Type" value="pulse" id="o2Pulse" onchange="onO2TypeChange()"> O2 pulsé</label>
+</div>
+<div id="o2ContinuFields" style="display:none">
+<div class="g3" style="grid-template-columns:1fr 1fr">
+<div><div class="lbl"><span class="dot a"></span>Débit (L/min)</div><input class="inp" id="o2Debit" type="number" placeholder="2" min="0" max="15" step="0.5"></div>
+<div><div class="lbl"><span class="dot a"></span>Modèle</div><input class="inp" id="o2ModeleContinu" type="text" placeholder="ex: INOGEN..."></div>
+</div>
+</div>
+<div id="o2PulseFields" style="display:none">
+<div class="g3" style="grid-template-columns:1fr 1fr">
+<div><div class="lbl"><span class="dot a"></span>Consigne</div><input class="inp" id="o2Consigne" type="number" placeholder="3" min="1" max="9"></div>
+<div><div class="lbl"><span class="dot a"></span>Modèle</div><input class="inp" id="o2ModelePulse" type="text" placeholder="ex: INOGEN..."></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="sh"><div class="n">3</div><h2>Mesures initiales</h2></div>
+<div class="card cg">
+<div class="vitals-inline">
+<div class="vblock">
+<div class="lbl"><span class="dot g"></span>SpO2 (%)</div>
+<input class="inp" id="spo2_pre" type="number" placeholder="98" min="70" max="100" oninput="syncPreToTable()">
+</div>
+<div class="vblock">
+<div class="lbl"><span class="dot a"></span>FC (bpm)</div>
+<input class="inp" id="fc_pre_form" type="number" placeholder="72" min="30" max="220" oninput="syncPreToTable()">
+</div>
+<div class="vblock">
+<div class="lbl"><span class="dot p"></span>Dyspnee (/10)</div>
+<input class="inp" id="dysp_pre" type="number" placeholder="0" min="0" max="10">
+</div>
+</div>
+</div>
+
+<div class="sh"><div class="n">4</div><h2>Chronometre & Tours</h2></div>
+<div class="card cb">
+<div class="lap-cfg">
+<div class="lbl"><span class="dot a"></span>Distance par tour</div>
+<input id="lapDist" type="number" value="50" min="1" max="500">
+<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--mut)">m</span>
+</div>
+<div class="chrono-card">
+<div class="chrono-display-wrap">
+<div class="chrono-progress-ring">
+<svg class="ring-svg" viewBox="0 0 70 70">
+<defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs>
+<circle class="ring-bg" cx="35" cy="35" r="30"/>
+<circle class="ring-progress" id="ringProgress" cx="35" cy="35" r="30"/>
+</svg>
+<div class="ring-center"><span class="ring-pct" id="ringPct">0%</span></div>
+</div>
+<div class="chrono-main">
+<div id="chronoDisplay">06:00</div>
+</div>
+</div>
+<div class="prog-wrap"><div class="prog-bar" id="chronoBar"></div></div>
+<div id="chronoStatus">Pret a demarrer</div>
+
+<!-- === BARRE PAUSE + TOUR === -->
+<div class="action-bar">
+  <!-- Bouton Pause test -->
+  <button id="btnPauseTest" class="btn-action-sq btn-pause-sq" onclick="togglePauseTest()" disabled title="Pause / Reprendre la pause">
+    <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+  </button>
+  <!-- Chrono Pause -->
+  <div class="action-chrono-block">
+    <span class="action-chrono-label">Pause</span>
+    <span id="pauseTestDisplay" class="action-chrono-val" style="color:var(--amb2)">00:00</span>
+  </div>
+  <!-- Chrono Tour -->
+  <div class="action-chrono-block">
+    <span class="action-chrono-label">Tour</span>
+    <span id="currentLapTime" class="action-chrono-val" style="color:var(--grn2)">00:00</span>
+  </div>
+  <!-- Bouton Tour -->
+  <button id="btnLap" class="btn-action-sq btn-tour-sq" onclick="addLap()" disabled title="Enregistrer un tour">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+  </button>
+</div>
+<!-- === FIN BARRE === -->
+
+<div class="cbtns">
+<button id="btnStart" class="btn btn-b" onclick="startChrono()"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>Demarrer</button>
+<button id="btnPause" class="btn btn-a" onclick="pauseChrono()" disabled><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pause</button>
+<button id="btnStop" class="btn btn-r" onclick="stopChrono()" disabled><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16"/></svg>Stop</button>
+<button class="btn btn-o" onclick="resetChrono()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.36"/></svg>Reset</button>
+</div>
+</div>
+<div class="lap-stats">
+<div class="lst"><div class="lv" id="statTours" style="color:var(--blue2)">0</div><div class="ll">Tours</div></div>
+<div class="lst"><div class="lv" id="statDistTours" style="color:var(--grn2)">0 m</div><div class="ll">Distance</div></div>
+<div class="lst"><div class="lv" id="statPauses" style="color:var(--amb2)">0</div><div class="ll">Pauses</div></div>
+</div>
+<div class="laps-list" id="lapsList"></div>
+<div class="laps-list" id="pausesList" style="margin-top:4px"></div>
+<div class="partial-input">
+<div class="lbl" style="margin-bottom:0"><span class="dot a"></span>Metres supplementaires (tour incomplet)</div>
+<input class="inp" id="partialDist" type="number" placeholder="0" min="0" oninput="updateTotal()">
+<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--mut)">→ Total : <span id="totalDistDisplay" style="color:var(--grn2);font-weight:600">0 m</span></span>
+</div>
+</div>
+
+<div class="sh"><div class="n">5</div><h2>Monitoring</h2></div>
+<div class="card cg">
+<div class="mon-wrap">
+<table class="mon-t">
+<thead><tr><th>Temps</th><th>SpO2</th><th>FC</th></tr></thead>
+<tbody id="monBody"></tbody>
+</table>
+</div>
+</div>
+
+<div class="sh"><div class="n">6</div><h2>Mesures finales</h2></div>
+<div class="card ca">
+<div class="vitals-inline">
+<div class="vblock">
+<div class="lbl"><span class="dot g"></span>SpO2 (%)</div>
+<input class="inp" id="spo2_post_form" type="number" placeholder="95" min="70" max="100" oninput="syncPostToTable()">
+</div>
+<div class="vblock">
+<div class="lbl"><span class="dot a"></span>FC (bpm)</div>
+<input class="inp" id="fc_post_form" type="number" placeholder="110" min="30" max="220" oninput="syncPostToTable()">
+</div>
+<div class="vblock">
+<div class="lbl"><span class="dot p"></span>Dyspnee (/10)</div>
+<input class="inp" id="dysp_post" type="number" placeholder="0" min="0" max="10">
+</div>
+</div>
+</div>
+
+<div class="sh"><div class="n">7</div><h2>Recuperation</h2></div>
+<div class="card cp">
+<div class="rec-section">
+<div><div class="lbl" style="margin-bottom:2px"><span class="dot p"></span>Chrono</div><div class="rec-timer" id="recovDisplay">03:00</div></div>
+<div style="display:flex;gap:5px;padding-top:4px">
+<button class="btn btn-b" onclick="startRecov()"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>Start</button>
+<button class="btn btn-o" onclick="resetRecov()">Reset</button>
+</div>
+<div class="rec-prog"><div class="rec-bar" id="recovBar"></div></div>
+</div>
+<div class="g2">
+<div><div class="lbl"><span class="dot g"></span>SpO2 3 min</div><input class="inp" id="spo2_recov" type="number" placeholder="97" min="70" max="100"></div>
+<div><div class="lbl"><span class="dot a"></span>FC 3 min</div><input class="inp" id="fc_recov" type="number" placeholder="85" min="30" max="220"></div>
+</div>
+<!-- === NOUVEAU : Champ Remarques === -->
+<div class="remarks-section">
+<div class="lbl" style="margin-bottom:6px"><span class="dot b"></span>Remarques</div>
+<textarea class="inp" id="remarks" placeholder="Notes libres, observations cliniques..." rows="3"></textarea>
+</div>
+<!-- === FIN NOUVEAU === -->
+</div>
+
+<div class="sh"><div class="n">8</div><h2>Resultats</h2></div>
+<div class="errmsg" id="errorMsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Renseignez : sexe, age, taille et poids.</span></div>
+<button class="btn-calc" onclick="calculate()">Calculer les resultats</button>
+
+<div id="resultsSection" class="hidden rs">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+<div style="font-family:'DM Serif Display',serif;font-size:16px;color:#fff">Resultats — <span id="resPatientName">Patient</span></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="btn-save" onclick="saveRecord()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Enregistrer</button>
+<button class="btn-pdf" onclick="exportPDF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>PDF</button>
+</div>
+</div>
+<div class="res-grid">
+<div class="res-card highlight"><div class="rv" id="resPredit">—</div><div class="rl">Distance predite</div></div>
+<div class="res-card highlight-grn"><div class="rv grn" id="resReel">—</div><div class="rl">Distance reelle</div></div>
+<div class="rc"><div class="rcl">Ecart</div><div class="rcv" id="resEcart">—</div></div>
+</div>
+<div class="card cg" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot g"></span>Detail distance</div>
+<div class="g3">
+<div><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--mut);margin-bottom:1px">Tours</div><div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--blue2)" id="resTours">—</div></div>
+<div><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--mut);margin-bottom:1px">Partiel</div><div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--amb2)" id="resPartiel">—</div></div>
+<div><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--mut);margin-bottom:1px">Total</div><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--grn2)" id="resTotalDist">—</div></div>
+</div>
+</div>
+<div class="gauge-wrap">
+<div class="lbl" style="margin-bottom:8px"><span class="dot g"></span>% valeur predite</div>
+<div class="gbw"><div class="gtrack"></div><div class="gfill" id="gaugeFill"></div><div class="gneedle" id="gaugeNeedle" style="left:0%"></div></div>
+<div class="glabels"><span>0%</span><span>50%</span><span>70%</span><span>100%</span><span>130%</span></div>
+<div class="pct-big" id="resPct">—</div>
+<div class="pct-sub">% de la valeur predite</div>
+<div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:8px;flex-wrap:wrap">
+<div style="text-align:center"><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Limite inferieure</div><div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--red2)" id="resLimInf">—</div><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--mut)">m</div></div>
+</div>
+<div class="interp" id="interpretation"></div>
+</div>
+<div class="card" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot g"></span>Monitoring</div>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:300px">
+<thead><tr>
+<th style="background:var(--sur2);padding:5px 7px;text-align:left;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:0.8px;color:var(--mut);border-bottom:1px solid var(--brd)">Temps</th>
+<th style="background:var(--sur2);padding:5px 7px;text-align:center;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:0.8px;color:var(--mut);border-bottom:1px solid var(--brd)">SpO2</th>
+<th style="background:var(--sur2);padding:5px 7px;text-align:center;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:0.8px;color:var(--mut);border-bottom:1px solid var(--brd)">FC</th>
+</tr></thead>
+<tbody id="monSummaryBody"></tbody>
+</table></div>
+</div>
+<div class="card" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot b"></span>Details</div>
+<table class="det-t"><thead><tr><th>Parametre</th><th>Valeur</th></tr></thead><tbody id="detailsBody"></tbody></table>
+</div>
+<div class="divider"></div>
+<p style="font-size:7px;color:var(--mut);font-family:'DM Mono',monospace;line-height:1.6;text-align:center">Enright PL, Sherrill DL. Reference equations for the six-minute walk in healthy adults.<br>Am J Respir Crit Care Med. 1998;158(5):1384-1387</p>
+</div>
+</div>
+</div>
+<!-- === FIN SECTION TEST === -->
+
+
+<!-- TOAST -->
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="toastMsg"></span></div>
+
+<!-- MODAL -->
+<div id="minModal" class="modal-ov">
+<div class="modal-box">
+<h3 id="modalTitle">Minute 1</h3>
+<div class="msub" id="modalSub">Saisir les donnees</div>
+<div class="modal-chrono">
+<div>
+<div class="modal-chrono-display" id="modalChronoDisplay">05:00</div>
+<div class="modal-chrono-label">Temps restant</div>
+</div>
+<button class="btn btn-g" onclick="modalAddLap()" style="padding:12px 16px">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+Tour
+</button>
+</div>
+<div class="modal-fields">
+<div class="mf"><div class="lbl"><span class="dot g"></span>SpO2 (%)</div><input type="number" id="modalSpo2" placeholder="—" min="70" max="100"></div>
+<div class="mf"><div class="lbl"><span class="dot a"></span>FC (bpm)</div><input type="number" id="modalFc" placeholder="—" min="30" max="220"></div>
+</div>
+<div id="modalPartialSection" class="modal-lap-section" style="display:none">
+<div class="lbl"><span class="dot a"></span>Distance supplementaire (tour incomplet)</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+<input type="number" id="modalPartial" placeholder="0" min="0" style="flex:1;background:var(--sur3);border:1px solid var(--brd);border-radius:6px;color:var(--txt);font-family:'DM Mono',monospace;font-size:18px;padding:6px 8px;outline:none;text-align:center">
+<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mut)">m</span>
+</div>
+</div>
+<div class="modal-btns">
+<button class="btn btn-o" onclick="closeModal()">Ignorer</button>
+<button class="btn btn-b" onclick="saveModal()">Enregistrer</button>
+</div>
+</div>
+</div>
+
+<script>
+'use strict';
+var currentSex = null;
+var lastResults = null;
+var currentDossierId = null;
+var chronoTimer = null;
+var currentLapTimer = null;
+var chronoRunning = false;
+var chronoStartTime = 0;
+var chronoElapsed = 0;
+var laps = [];
+var lapStartElapsed = 0;
+var TOTAL_SEC = 360;
+var lastMinFired = 0;
+var recovTimer = null;
+var recovRunning = false;
+var recovSec = 180;
+var modalTargetMin = 0;
+// Aide technique & O2
+var aideActive = false;
+var o2Active = false;
+// Pauses du test
+var pauseTestRunning = false;
+var pauseTestStartElapsed = 0; // chronoElapsed quand la pause démarre
+var pauseTestStartTime = 0;    // Date.now() quand la pause démarre
+var pauseTestCurrentSec = 0;   // durée actuelle de la pause en cours
+var pauseTestTimer = null;
+var pauses = [];               // [{at: elapsed_sec, duration: sec}, ...]
+var MON = [
+{label:'Repos',spId:'sp_pre',fcId:'fc_m_pre'},
+{label:'Min 1',spId:'sp_m1',fcId:'fc_m1'},
+{label:'Min 2',spId:'sp_m2',fcId:'fc_m2'},
+{label:'Min 3',spId:'sp_m3',fcId:'fc_m3'},
+{label:'Min 4',spId:'sp_m4',fcId:'fc_m4'},
+{label:'Min 5',spId:'sp_m5',fcId:'fc_m5'},
+{label:'Min 6',spId:'sp_m6',fcId:'fc_m6'}
+];
+var EQ = {
+M:{lbl:'(7.57 × Taille) - (5.02 × Age) - (1.76 × Poids) - 309',note:'ET = 153 m | Valide 40-80 ans',calc:function(a,h,w){return 7.57*h-5.02*a-1.76*w-309;},sd:153},
+F:{lbl:'(2.11 × Taille) - (2.29 × Poids) - (5.78 × Age) + 667',note:'ET = 139 m | Valide 40-80 ans',calc:function(a,h,w){return 2.11*h-2.29*w-5.78*a+667;},sd:139}
+};
+
+document.addEventListener('DOMContentLoaded',function(){
+buildMonTable();
+updateTotal();
+updateRing(0);
+loadDossiers();
+toggleAide(false);
+toggleO2(false);
+});
+
+function fmt(s){
+var m = Math.floor(s/60);
+var sec = s%60;
+return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+}
+function gv(id){
+var e = document.getElementById(id);
+return e ? e.value : '';
+}
+function showToast(msg, type){
+var toast = document.getElementById('toast');
+var msgEl = document.getElementById('toastMsg');
+msgEl.textContent = msg;
+toast.className = 'toast ' + (type || '');
+toast.classList.add('show');
+setTimeout(function(){ toast.classList.remove('show'); }, 3000);
+}
+
+// === Aide technique & O2 ===
+function toggleAide(state){
+aideActive = state;
+document.getElementById('togAideNon').className = 'tog-btn' + (state ? '' : ' active');
+document.getElementById('togAideOui').className = 'tog-btn' + (state ? ' active' : '');
+document.getElementById('aideOptions').style.display = state ? 'block' : 'none';
+if(!state){ var rads = document.querySelectorAll('input[name="aideType"]'); rads.forEach(function(r){r.checked=false;}); }
+}
+function onAideChange(){ /* nothing extra needed */ }
+function toggleO2(state){
+o2Active = state;
+document.getElementById('togO2Non').className = 'tog-btn' + (state ? '' : ' active');
+document.getElementById('togO2Oui').className = 'tog-btn' + (state ? ' active' : '');
+document.getElementById('o2Options').style.display = state ? 'block' : 'none';
+if(!state){ var rads = document.querySelectorAll('input[name="o2Type"]'); rads.forEach(function(r){r.checked=false;}); onO2TypeChange(); }
+}
+function onO2TypeChange(){
+var cont = document.getElementById('o2Continu');
+var puls = document.getElementById('o2Pulse');
+document.getElementById('o2ContinuFields').style.display = (cont && cont.checked) ? 'block' : 'none';
+document.getElementById('o2PulseFields').style.display = (puls && puls.checked) ? 'block' : 'none';
+}
+function getAideData(){
+if(!aideActive) return {aide: 'Non', aideType: ''};
+var checked = document.querySelector('input[name="aideType"]:checked');
+return {aide: 'Oui', aideType: checked ? checked.value : ''};
+}
+function getO2Data(){
+if(!o2Active) return {o2: 'Non', o2Type: '', o2Debit: '', o2Consigne: '', o2Modele: ''};
+var contChecked = document.getElementById('o2Continu').checked;
+var pulsChecked = document.getElementById('o2Pulse').checked;
+if(contChecked){
+return {o2:'Oui', o2Type:'Continu', o2Debit: document.getElementById('o2Debit').value || '', o2Consigne:'', o2Modele: document.getElementById('o2ModeleContinu').value || ''};
+} else if(pulsChecked){
+return {o2:'Oui', o2Type:'Pulse', o2Debit:'', o2Consigne: document.getElementById('o2Consigne').value || '', o2Modele: document.getElementById('o2ModelePulse').value || ''};
+}
+return {o2:'Oui', o2Type:'', o2Debit:'', o2Consigne:'', o2Modele:''};
+}
+
+
+// === Navigation ===
+function showSection(section){
+var testSec = document.getElementById('testSection');
+var dossiersSec = document.getElementById('dossiersSection');
+var navTest = document.getElementById('navTest');
+var navDossiers = document.getElementById('navDossiers');
+
+if(section === 'test'){
+testSec.classList.remove('hidden');
+testSec.style.display = 'block';
+dossiersSec.style.display = 'none';
+dossiersSec.classList.remove('active');
+navTest.classList.add('active');
+navTest.classList.remove('nav-btn-secondary');
+navTest.classList.add('nav-btn-primary');
+navDossiers.classList.remove('active');
+navDossiers.classList.add('nav-btn-secondary');
+navDossiers.classList.remove('nav-btn-primary');
+}else{
+testSec.classList.add('hidden');
+testSec.style.display = 'none';
+// Position dossiers panel right below nav-bar
+var navBar = document.querySelector('.nav-bar');
+var navRect = navBar.getBoundingClientRect();
+dossiersSec.style.top = navRect.bottom + 'px';
+dossiersSec.style.display = 'flex';
+dossiersSec.classList.add('active');
+navDossiers.classList.add('active');
+navDossiers.classList.remove('nav-btn-secondary');
+navDossiers.classList.add('nav-btn-primary');
+navTest.classList.remove('active');
+navTest.classList.add('nav-btn-secondary');
+navTest.classList.remove('nav-btn-primary');
+loadDossiers();
+}
+}
+
+// === Gestion des Dossiers ===
+function getDossiers(){
+try{
+var data = localStorage.getItem('tm6_dossiers');
+return data ? JSON.parse(data) : [];
+}catch(e){return [];}
+}
+
+function saveDossiers(dossiers){
+localStorage.setItem('tm6_dossiers', JSON.stringify(dossiers));
+}
+
+function saveRecord(){
+if(!lastResults){
+showToast('Calculez les resultats d\'abord', 'err');
+return;
+}
+var patientName = lastResults.patientName || 'Patient';
+var date = new Date();
+var dateStr = date.toLocaleDateString('fr-FR', {year:'numeric', month:'2-digit', day:'2-digit'}).replace(/\//g, '-');
+var recordName = patientName.replace(/\s+/g, '_') + '_' + dateStr;
+var record = {
+id: Date.now().toString(),
+name: recordName,
+patientName: patientName,
+date: date.toLocaleDateString('fr-FR', {year:'numeric', month:'long', day:'numeric'}),
+timestamp: date.getTime(),
+data: lastResults,
+remarks: document.getElementById('remarks').value || ''
+};
+var dossiers = getDossiers();
+dossiers.push(record);
+saveDossiers(dossiers);
+showToast('Dossier enregistre : ' + recordName, 'ok');
+if(navigator.vibrate) navigator.vibrate([50, 30, 50]);
+}
+
+function loadDossiers(){
+var dossiers = getDossiers();
+var list = document.getElementById('dossiersList');
+if(dossiers.length === 0){
+list.innerHTML = '<div class="dossier-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="12" y1="7" x2="12.01" y2="7"/></svg><p>Aucun dossier enregistre</p><p style="font-size:10px;margin-top:4px">Completez un test et cliquez sur "Enregistrer"</p></div>';
+return;
+}
+dossiers.sort(function(a, b){
+return a.patientName.localeCompare(b.patientName, 'fr');
+});
+var html = '';
+dossiers.forEach(function(d){
+var dist = d.data && d.data.distance > 0 ? Math.round(d.data.distance) + 'm' : '—';
+var pct = d.data && d.data.distance > 0 ? d.data.pct.toFixed(0) + '% VP' : '';
+var meta = [d.date, dist, pct].filter(Boolean).join(' · ');
+html += '<div class="dossier-item" onclick="openDossier(\''+d.id+'\')" data-id="'+d.id+'" data-name="'+d.patientName.toLowerCase()+'">'+
+'<div class="dossier-info">'+
+'<div class="dossier-name">'+d.patientName+'</div>'+
+'<div class="dossier-meta">'+meta+'</div>'+
+'</div>'+
+'<div class="dossier-actions">'+
+'<button class="btn btn-b" style="padding:4px 8px;font-size:9px" onclick="event.stopPropagation();openDossier(\''+d.id+'\')">Voir →</button>'+
+'</div>'+
+'</div>';
+});
+list.innerHTML = html;
+}
+
+function filterDossiers(){
+var search = document.getElementById('dossierSearch').value.toLowerCase();
+var items = document.querySelectorAll('.dossier-item');
+items.forEach(function(item){
+var name = item.getAttribute('data-name');
+if(name.includes(search)){
+item.style.display = 'flex';
+}else{
+item.style.display = 'none';
+}
+});
+}
+
+function clearSearch(){
+document.getElementById('dossierSearch').value = '';
+filterDossiers();
+}
+
+// === NOUVEAU : Export tous les dossiers en JSON ===
+function exportAllDossiersJSON(){
+var dossiers = getDossiers();
+if(dossiers.length === 0){
+showToast('Aucun dossier a exporter', 'err');
+return;
+}
+var date = new Date();
+var dateStr = date.toISOString().split('T')[0];
+var dataStr = JSON.stringify(dossiers, null, 2);
+var dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+var exportFileDefaultName = 'TM6_Tous_Dossiers_' + dateStr + '.json';
+var linkElement = document.createElement('a');
+linkElement.setAttribute('href', dataUri);
+linkElement.setAttribute('download', exportFileDefaultName);
+linkElement.click();
+showToast(dossiers.length + ' dossier(s) exporte(s)', 'ok');
+}
+// === FIN NOUVEAU ===
+
+function importDossiersJSON(){
+document.getElementById('importFileInput').click();
+}
+
+function handleImportFile(event){
+var file = event.target.files[0];
+if(!file) return;
+var reader = new FileReader();
+reader.onload = function(e){
+try{
+var imported = JSON.parse(e.target.result);
+if(!Array.isArray(imported)){
+showToast('Format invalide : tableau JSON attendu', 'err');
+return;
+}
+var existing = getDossiers();
+var existingIds = {};
+existing.forEach(function(d){ existingIds[d.id] = true; });
+var added = 0, skipped = 0;
+imported.forEach(function(d){
+if(d.id && d.patientName){
+if(existingIds[d.id]){
+skipped++;
+}else{
+existing.push(d);
+added++;
+}
+}
+});
+saveDossiers(existing);
+loadDossiers();
+showToast(added + ' dossier(s) importé(s)' + (skipped > 0 ? ', ' + skipped + ' doublon(s) ignoré(s)' : ''), 'ok');
+}catch(err){
+showToast('Erreur de lecture JSON : ' + err.message, 'err');
+}
+event.target.value = '';
+};
+reader.readAsText(file);
+}
+
+function openDossier(id){
+var dossiers = getDossiers();
+var dossier = dossiers.find(function(d){return d.id === id;});
+if(!dossier) return;
+currentDossierId = id;
+lastResults = dossier.data;
+document.getElementById('detailPatientName').textContent = dossier.patientName + ' (' + dossier.date + ')';
+document.getElementById('detailPredit').textContent = Math.round(dossier.data.pred) + ' m';
+document.getElementById('detailReel').textContent = dossier.data.distance > 0 ? Math.round(dossier.data.distance) + ' m' : '—';
+document.getElementById('detailEcart').textContent = dossier.data.distance > 0 ? (dossier.data.ecart >= 0 ? '+' : '') + Math.round(dossier.data.ecart) : '—';
+document.getElementById('detailPct').textContent = dossier.data.distance > 0 ? dossier.data.pct.toFixed(0) + '%' : '—';
+var gp = Math.min(Math.max(dossier.data.pct / 130 * 100, 0), 100);
+document.getElementById('detailGaugeFill').style.width = gp + '%';
+document.getElementById('detailGaugeNeedle').style.left = gp + '%';
+var interp = document.getElementById('detailInterpretation');
+if(!dossier.data.distance){
+interp.className = 'interp';
+interp.textContent = 'Distance non renseignee';
+}else if(dossier.data.pct < 70){
+interp.className = 'interp low';
+interp.textContent = 'Capacite reduite (< 70% VP)';
+}else if(dossier.data.pct < 84){
+interp.className = 'interp mid';
+interp.textContent = 'Capacite diminuee (70-84% VP)';
+}else{
+interp.className = 'interp good';
+interp.textContent = 'Capacite normale (≥ 84% VP)';
+}
+// Affichage des remarques
+var remarksEl = document.getElementById('detailRemarks');
+if(dossier.remarks && dossier.remarks.trim() !== ''){
+remarksEl.textContent = dossier.remarks;
+}else{
+remarksEl.textContent = '—';
+}
+var r = dossier.data;
+document.getElementById('detailBody').innerHTML =
+'<tr><td>Patient</td><td>'+r.patientName+'</td></tr>'+
+'<tr><td>Sexe</td><td>'+(r.sex==='M'?'Homme':'Femme')+'</td></tr>'+
+'<tr><td>Age</td><td>'+r.age+' ans</td></tr>'+
+'<tr><td>Taille</td><td>'+r.height+' cm</td></tr>'+
+'<tr><td>Poids</td><td>'+r.weight+' kg</td></tr>'+
+'<tr><td>IMC</td><td>'+r.imc+' kg/m²</td></tr>'+
+'<tr><td>D. predite</td><td>'+Math.round(r.pred)+' m</td></tr>'+
+'<tr><td>Distance</td><td>'+r.distance+' m</td></tr>'+
+'<tr><td>% VP</td><td>'+(r.distance>0?r.pct.toFixed(0)+'%':'—')+'</td></tr>'+
+'<tr><td>Limite inferieure</td><td>'+(r.limInf!=null?Math.round(r.limInf)+' m':'—')+'</td></tr>'+
+'<tr><td>Vitesse</td><td>'+r.vitKmh+'</td></tr>';
+document.getElementById('dossierDetail').classList.remove('hidden');
+document.getElementById('dossiersScrollArea').style.display = 'none';
+window.scrollTo(0, 0);
+}
+
+function closeDossierDetail(){
+document.getElementById('dossierDetail').classList.add('hidden');
+document.getElementById('dossiersScrollArea').style.display = '';
+currentDossierId = null;
+}
+
+function deleteDossier(){
+if(!currentDossierId) return;
+if(!confirm('Supprimer ce dossier definitivement ?')) return;
+var dossiers = getDossiers();
+dossiers = dossiers.filter(function(d){return d.id !== currentDossierId;});
+saveDossiers(dossiers);
+closeDossierDetail();
+loadDossiers();
+showToast('Dossier supprime', 'ok');
+}
+
+function exportPDFFromDetail(){
+if(!lastResults){
+showToast('Aucun dossier selectionne', 'err');
+return;
+}
+exportPDF();
+}
+
+function setSex(s){
+currentSex = s;
+document.getElementById('btnM').className = 'sx' + (s==='M'?' am':'');
+document.getElementById('btnF').className = 'sx' + (s==='F'?' af':'');
+document.getElementById('eqDisplay').innerHTML = '<span style="color:var(--grn2)">D predite</span> = '+EQ[s].lbl;
+document.getElementById('eqNote').textContent = EQ[s].note;
+}
+
+function buildMonTable(){
+var html = '';
+for(var i=0; i<MON.length; i++){
+var r = MON[i];
+var onchg = (i===6)?'oninput="syncM6ToPost()"':'';
+html += '<tr><td>'+r.label+'</td>'
++'<td><input type="number" id="'+r.spId+'" placeholder="—" min="70" max="100" '+onchg+'></td>'
++'<td><input type="number" id="'+r.fcId+'" placeholder="—" min="30" max="220" '+onchg+'></td></tr>';
+}
+document.getElementById('monBody').innerHTML = html;
+}
+
+function syncPreToTable(){
+var s = document.getElementById('spo2_pre').value;
+var f = document.getElementById('fc_pre_form').value;
+var sp = document.getElementById('sp_pre');
+var fc = document.getElementById('fc_m_pre');
+if(sp) sp.value = s;
+if(fc) fc.value = f;
+}
+
+function syncM6ToPost(){
+var s = document.getElementById('sp_m6');
+var f = document.getElementById('fc_m6');
+if(s && s.value) document.getElementById('spo2_post_form').value = s.value;
+if(f && f.value) document.getElementById('fc_post_form').value = f.value;
+}
+
+function syncPostToTable(){
+var s = document.getElementById('spo2_post_form').value;
+var f = document.getElementById('fc_post_form').value;
+var sp = document.getElementById('sp_m6');
+var fc = document.getElementById('fc_m6');
+if(sp && s) sp.value = s;
+if(fc && f) fc.value = f;
+}
+
+function updateTotal(){
+var ld = parseFloat(document.getElementById('lapDist').value) || 0;
+var p = parseFloat(document.getElementById('partialDist').value) || 0;
+document.getElementById('totalDistDisplay').textContent = (laps.length * ld + p) + ' m';
+}
+
+// === CHRONO TOUR EN COURS ===
+function updateCurrentLapTime(){
+if(chronoRunning){
+var currentLapElapsed = chronoElapsed - lapStartElapsed;
+document.getElementById('currentLapTime').textContent = fmt(currentLapElapsed);
+}
+}
+// === FIN CHRONO TOUR ===
+
+function validatePatientData(){
+var age = document.getElementById('age').value;
+var height = document.getElementById('height').value;
+var weight = document.getElementById('weight').value;
+if(!currentSex || !age || !height || !weight){
+showToast('Donnees manquantes : sexe, age, taille, poids', 'err');
+return false;
+}
+return true;
+}
+
+function startChrono(){
+if(chronoRunning) return;
+if(!validatePatientData()) return;
+if(chronoElapsed === 0){
+laps = [];
+lastMinFired = 0;
+lapStartElapsed = 0;
+}
+chronoRunning = true;
+chronoStartTime = Date.now() - (chronoElapsed * 1000);
+document.getElementById('btnStart').disabled = true;
+document.getElementById('btnLap').disabled = false;
+document.getElementById('btnPause').disabled = false;
+document.getElementById('btnStop').disabled = false;
+document.getElementById('btnPauseTest').disabled = false;
+document.getElementById('chronoStatus').textContent = 'Test en cours…';
+chronoTimer = setInterval(tickChrono, 100);
+currentLapTimer = setInterval(updateCurrentLapTime, 100);
+tickChrono();
+updateCurrentLapTime();
+}
+
+function tickChrono(){
+var now = Date.now();
+chronoElapsed = Math.floor((now - chronoStartTime) / 1000);
+if(chronoElapsed > TOTAL_SEC) chronoElapsed = TOTAL_SEC;
+var rem = TOTAL_SEC - chronoElapsed;
+var pct = Math.round(chronoElapsed / TOTAL_SEC * 100);
+document.getElementById('chronoDisplay').textContent = fmt(rem);
+document.getElementById('chronoBar').style.width = pct + '%';
+document.getElementById('ringPct').textContent = pct + '%';
+updateRing(chronoElapsed / TOTAL_SEC);
+if(document.getElementById('minModal').classList.contains('show')){
+document.getElementById('modalChronoDisplay').textContent = fmt(rem);
+}
+var disp = document.getElementById('chronoDisplay');
+if(rem <= 30 && rem > 0){
+disp.className = 'warn';
+}else if(rem <= 0){
+disp.className = 'done';
+}else{
+disp.className = 'run';
+}
+checkMinuteTriggers();
+if(rem <= 0) stopChrono();
+}
+
+function checkMinuteTriggers(){
+for(var m = 1; m <= 6; m++){
+var threshold = m * 60;
+if(chronoElapsed >= threshold && lastMinFired < m){
+lastMinFired = m;
+openModal(m);
+return;
+}
+}
+}
+
+function updateRing(progress){
+var ring = document.getElementById('ringProgress');
+if(ring){
+var circumference = 2 * Math.PI * 30;
+var offset = circumference * (1 - progress);
+ring.style.strokeDashoffset = offset;
+}
+}
+
+function pauseChrono(){
+if(!chronoRunning) return;
+clearInterval(chronoTimer);
+clearInterval(currentLapTimer);
+chronoTimer = null;
+currentLapTimer = null;
+chronoRunning = false;
+document.getElementById('btnStart').disabled = false;
+document.getElementById('btnPause').disabled = true;
+document.getElementById('chronoStatus').textContent = 'En pause';
+}
+
+var testStoppedAt = null; // null = normal finish, number = elapsed seconds at stop
+
+function stopChrono(){
+clearInterval(chronoTimer);
+clearInterval(currentLapTimer);
+chronoTimer = null;
+currentLapTimer = null;
+chronoRunning = false;
+// Si arrêt manuel avant 360s, mémoriser
+if(chronoElapsed < TOTAL_SEC){
+testStoppedAt = chronoElapsed;
+}else{
+testStoppedAt = null;
+}
+document.getElementById('btnStart').disabled = true;
+document.getElementById('btnLap').disabled = true;
+document.getElementById('btnPause').disabled = true;
+document.getElementById('btnStop').disabled = true;
+document.getElementById('chronoStatus').textContent = testStoppedAt !== null ? 'Test arrêté à ' + fmt(testStoppedAt) : 'Test terminé';
+document.getElementById('chronoDisplay').className = 'done';
+document.getElementById('chronoBar').style.width = (chronoElapsed / TOTAL_SEC * 100) + '%';
+document.getElementById('ringPct').textContent = Math.round(chronoElapsed / TOTAL_SEC * 100) + '%';
+updateRing(chronoElapsed / TOTAL_SEC);
+document.getElementById('currentLapTime').textContent = '—';
+var distMsg = document.getElementById('totalDistDisplay').textContent;
+showToast(testStoppedAt !== null ? 'Test arrêté à ' + fmt(testStoppedAt) + ' — ' + distMsg : 'Test terminé ! Distance : ' + distMsg, 'ok');
+if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 150]);
+}
+
+function resetChrono(){
+clearInterval(chronoTimer);
+clearInterval(currentLapTimer);
+chronoTimer = null;
+currentLapTimer = null;
+chronoRunning = false;
+chronoElapsed = 0;
+chronoStartTime = 0;
+laps = [];
+lapStartElapsed = 0;
+lastMinFired = 0;
+testStoppedAt = null;
+// Reset pauses
+clearInterval(pauseTestTimer);
+pauseTestTimer = null;
+pauseTestRunning = false;
+pauseTestCurrentSec = 0;
+pauses = [];
+document.getElementById('pauseTestDisplay').textContent = '00:00';
+document.getElementById('btnPauseTest').disabled = true;
+document.getElementById('btnPauseTest').classList.remove('active');
+document.getElementById('statPauses').textContent = '0';
+document.getElementById('pausesList').innerHTML = '';
+document.getElementById('chronoDisplay').textContent = '06:00';
+document.getElementById('chronoDisplay').className = '';
+document.getElementById('chronoBar').style.width = '0%';
+document.getElementById('chronoStatus').textContent = 'Pret a demarrer';
+document.getElementById('ringPct').textContent = '0%';
+updateRing(0);
+document.getElementById('btnStart').disabled = false;
+document.getElementById('btnLap').disabled = false;
+document.getElementById('btnPause').disabled = true;
+document.getElementById('btnStop').disabled = true;
+document.getElementById('lapsList').innerHTML = '';
+document.getElementById('statTours').textContent = '0';
+document.getElementById('statDistTours').textContent = '0 m';
+document.getElementById('currentLapTime').textContent = '00:00';
+updateTotal();
+}
+
+function addLap(){
+var lapBtn = document.getElementById('btnLap');
+lapBtn.classList.remove('lap-flash');
+void lapBtn.offsetWidth;
+lapBtn.classList.add('lap-flash');
+setTimeout(function(){ lapBtn.classList.remove('lap-flash'); }, 250);
+if(navigator.vibrate) navigator.vibrate(80);
+var ld = parseFloat(document.getElementById('lapDist').value) || 0;
+var dur = chronoElapsed - lapStartElapsed;
+var num = laps.length + 1;
+laps.push({num:num, elapsed:chronoElapsed, duration:dur, dist:ld});
+lapStartElapsed = chronoElapsed;
+var kmh = (dur > 0) ? ((ld / dur) * 3.6).toFixed(1) + ' km/h' : '—';
+var row = document.createElement('div');
+row.className = 'lap-row';
+row.innerHTML = '<span style="color:var(--mut)">#'+num+'</span>'
++'<span>'+fmt(chronoElapsed)+'</span>'
++'<span style="color:var(--blue2)">'+fmt(dur)+'</span>'
++'<span style="color:var(--grn2)">'+ld+'m · '+kmh+'</span>';
+document.getElementById('lapsList').prepend(row);
+var td = laps.length * ld;
+document.getElementById('statTours').textContent = laps.length;
+document.getElementById('statDistTours').textContent = td + ' m';
+updateTotal();
+}
+
+function modalAddLap(){
+if(navigator.vibrate) navigator.vibrate(80);
+var ld = parseFloat(document.getElementById('lapDist').value) || 0;
+var dur = chronoElapsed - lapStartElapsed;
+var num = laps.length + 1;
+laps.push({num:num, elapsed:chronoElapsed, duration:dur, dist:ld});
+lapStartElapsed = chronoElapsed;
+var kmh = (dur > 0) ? ((ld / dur) * 3.6).toFixed(1) + ' km/h' : '—';
+var row = document.createElement('div');
+row.className = 'lap-row';
+row.innerHTML = '<span style="color:var(--mut)">#'+num+'</span>'
++'<span>'+fmt(chronoElapsed)+'</span>'
++'<span style="color:var(--blue2)">'+fmt(dur)+'</span>'
++'<span style="color:var(--grn2)">'+ld+'m · '+kmh+'</span>';
+document.getElementById('lapsList').prepend(row);
+var td = laps.length * ld;
+document.getElementById('statTours').textContent = laps.length;
+document.getElementById('statDistTours').textContent = td + ' m';
+updateTotal();
+showToast('Tour #' + num + ' enregistre', 'ok');
+}
+
+function togglePauseTest(){
+var btn = document.getElementById('btnPauseTest');
+if(!pauseTestRunning){
+pauseTestRunning = true;
+pauseTestStartElapsed = chronoElapsed;
+pauseTestStartTime = Date.now();
+pauseTestCurrentSec = 0;
+btn.classList.add('active');
+btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px"><rect x="5" y="4" width="14" height="16" rx="2"/></svg>';
+if(navigator.vibrate) navigator.vibrate(80);
+pauseTestTimer = setInterval(function(){
+pauseTestCurrentSec = Math.round((Date.now() - pauseTestStartTime) / 1000);
+document.getElementById('pauseTestDisplay').textContent = fmt(pauseTestCurrentSec);
+}, 200);
+} else {
+clearInterval(pauseTestTimer);
+pauseTestTimer = null;
+pauseTestRunning = false;
+btn.classList.remove('active');
+btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+var dur = pauseTestCurrentSec;
+pauses.push({at: pauseTestStartElapsed, duration: dur});
+var pauseNum = pauses.length;
+document.getElementById('statPauses').textContent = pauseNum;
+var mm = Math.floor(pauseTestStartElapsed / 60), ss = pauseTestStartElapsed % 60;
+var row = document.createElement('div');
+row.className = 'lap-row';
+row.style.borderColor = 'rgba(245,158,11,0.4)';
+row.style.background = 'rgba(245,158,11,0.06)';
+row.innerHTML = '<span style="color:var(--amb2)">P'+pauseNum+'</span>'
++'<span style="color:var(--mut)">a '+(mm<10?'0':'')+mm+'m'+(ss<10?'0':'')+ss+'s</span>'
++'<span style="color:var(--amb2)">'+dur+'s</span>'
++'<span style="color:var(--mut);font-size:8px">pause</span>';
+document.getElementById('pausesList').prepend(row);
+document.getElementById('pauseTestDisplay').textContent = '00:00';
+pauseTestCurrentSec = 0;
+if(navigator.vibrate) navigator.vibrate([50, 30, 50]);
+}
+}
+
+
+function startRecov(){
+recovRunning = true;
+recovSec = 180;
+document.getElementById('recovDisplay').style.color = 'var(--pur)';
+recovTimer = setInterval(function(){
+recovSec--;
+document.getElementById('recovDisplay').textContent = fmt(recovSec);
+document.getElementById('recovBar').style.width = ((180 - recovSec) / 180 * 100) + '%';
+if(recovSec <= 0){
+clearInterval(recovTimer);
+recovTimer = null;
+recovRunning = false;
+document.getElementById('recovDisplay').style.color = 'var(--grn2)';
+showToast('Recuperation terminee', 'ok');
+if(navigator.vibrate) navigator.vibrate([80, 40, 80, 40, 80]);
+}
+}, 1000);
+}
+
+function resetRecov(){
+clearInterval(recovTimer);
+recovTimer = null;
+recovRunning = false;
+recovSec = 180;
+document.getElementById('recovDisplay').textContent = '03:00';
+document.getElementById('recovDisplay').style.color = 'var(--pur)';
+document.getElementById('recovBar').style.width = '0%';
+}
+
+function openModal(min){
+modalTargetMin = min;
+document.getElementById('modalTitle').textContent = 'Minute ' + min + (min===6?' / Fin':'');
+document.getElementById('modalSub').textContent = 'Saisir les donnees';
+document.getElementById('modalSpo2').value = '';
+document.getElementById('modalFc').value = '';
+document.getElementById('modalPartial').value = '';
+var rem = TOTAL_SEC - chronoElapsed;
+document.getElementById('modalChronoDisplay').textContent = fmt(rem);
+document.getElementById('modalPartialSection').style.display = (min === 6) ? 'block' : 'none';
+document.getElementById('minModal').classList.add('show');
+setTimeout(function(){ document.getElementById('modalSpo2').focus(); }, 120);
+if(navigator.vibrate) navigator.vibrate([50, 30, 50]);
+}
+
+function closeModal(){
+document.getElementById('minModal').classList.remove('show');
+}
+
+function saveModal(){
+var s = document.getElementById('modalSpo2').value;
+var f = document.getElementById('modalFc').value;
+var p = document.getElementById('modalPartial').value;
+var idx = modalTargetMin;
+var row = MON[idx];
+var spEl = document.getElementById(row.spId);
+var fcEl = document.getElementById(row.fcId);
+if(spEl && s) spEl.value = s;
+if(fcEl && f) fcEl.value = f;
+if(idx === 6){
+if(s) document.getElementById('spo2_post_form').value = s;
+if(f) document.getElementById('fc_post_form').value = f;
+if(p) document.getElementById('partialDist').value = p;
+updateTotal();
+}
+closeModal();
+}
+
+function calculate(){
+var err = document.getElementById('errorMsg');
+err.classList.remove('show');
+var patientName = document.getElementById('patientName').value || 'Patient';
+var age = parseFloat(document.getElementById('age').value);
+var height = parseFloat(document.getElementById('height').value);
+var weight = parseFloat(document.getElementById('weight').value);
+if(!currentSex || isNaN(age) || isNaN(height) || isNaN(weight)){
+err.classList.add('show');
+return;
+}
+var ld = parseFloat(document.getElementById('lapDist').value) || 0;
+var partial = parseFloat(document.getElementById('partialDist').value) || 0;
+var tourDist = laps.length * ld;
+var distance = tourDist + partial;
+var eq = EQ[currentSex];
+var pred = eq.calc(age, height, weight);
+var sd = eq.sd;
+var pct = distance > 0 ? (distance / pred) * 100 : 0;
+var ecart = distance - pred;
+var lin = pred - 2 * sd;
+var lsn = pred + 2 * sd;
+var limInf = pred - sd; // Homme: pred - 153, Femme: pred - 139
+var imc = (weight / Math.pow(height / 100, 2)).toFixed(1);
+var vitKmh = distance > 0 ? ((distance / (testStoppedAt || 360)) * 3.6).toFixed(1) + ' km/h' : '—';
+var dyspPreVal = gv('dysp_pre');
+var dyspPostVal = gv('dysp_post');
+var remarks = document.getElementById('remarks').value || '';
+var monData = MON.map(function(r, i){
+return {label: r.label, spo2: gv(r.spId), fc: gv(r.fcId)};
+});
+var aideData = getAideData();
+var o2Data = getO2Data();
+lastResults = {
+patientName: patientName,
+sex: currentSex, age: age, height: height, weight: weight, imc: imc,
+distance: distance, pred: pred, pct: pct, ecart: ecart, sd: sd, lin: lin, lsn: lsn, limInf: limInf,
+stoppedAt: testStoppedAt,
+pauses: pauses.slice(),
+lapsCount: laps.length, lapDist: ld, partial: partial, tourDist: tourDist, laps: laps.slice(),
+spo2_pre: gv('spo2_pre'), fc_pre: gv('fc_pre_form'),
+spo2_post: gv('spo2_post_form'), fc_post: gv('fc_post_form'),
+spo2_recov: gv('spo2_recov'), fc_recov: gv('fc_recov'),
+dysp_pre: dyspPreVal, dysp_post: dyspPostVal, monData: monData, vitKmh: vitKmh,
+remarks: remarks,
+aide: aideData.aide, aideType: aideData.aideType,
+o2: o2Data.o2, o2Type: o2Data.o2Type, o2Debit: o2Data.o2Debit, o2Consigne: o2Data.o2Consigne, o2Modele: o2Data.o2Modele
+};
+document.getElementById('resPatientName').textContent = patientName;
+document.getElementById('resPredit').textContent = Math.round(pred) + ' m';
+document.getElementById('resReel').textContent = distance > 0 ? Math.round(distance) + ' m' : '—';
+document.getElementById('resEcart').textContent = distance > 0 ? (ecart >= 0 ? '+' : '') + Math.round(ecart) : '—';
+document.getElementById('resPct').textContent = distance > 0 ? pct.toFixed(0) + '%' : '—';
+document.getElementById('resLimInf').textContent = Math.round(limInf);
+document.getElementById('resTours').textContent = laps.length + ' × ' + ld + 'm = ' + tourDist + 'm';
+document.getElementById('resPartiel').textContent = partial + ' m';
+document.getElementById('resTotalDist').textContent = distance + ' m';
+var gp = Math.min(Math.max(pct / 130 * 100, 0), 100);
+document.getElementById('gaugeFill').style.width = gp + '%';
+document.getElementById('gaugeNeedle').style.left = gp + '%';
+var interp = document.getElementById('interpretation');
+if(!distance){
+interp.className = 'interp';
+interp.textContent = 'Distance non renseignee';
+}else if(pct < 70){
+interp.className = 'interp low';
+interp.textContent = 'Capacite reduite (< 70% VP)';
+}else if(pct < 84){
+interp.className = 'interp mid';
+interp.textContent = 'Capacite diminuee (70-84% VP)';
+}else{
+interp.className = 'interp good';
+interp.textContent = 'Capacite normale (≥ 84% VP)';
+}
+var r = lastResults;
+var msb = '';
+r.monData.forEach(function(row){
+msb += '<tr><td style="padding:4px 6px;border-bottom:1px solid rgba(30,45,71,0.3);font-size:9px;color:var(--mut)">'+row.label+'</td>'
++'<td style="padding:4px 6px;border-bottom:1px solid rgba(30,45,71,0.3);text-align:center;color:var(--grn2)">'+(row.spo2||'—')+'</td>'
++'<td style="padding:4px 6px;border-bottom:1px solid rgba(30,45,71,0.3);text-align:center;color:var(--amb2)">'+(row.fc||'—')+'</td></tr>';
+});
+msb += '<tr><td style="padding:4px 6px;color:var(--pur2)">Recup</td><td style="padding:4px 6px;text-align:center;color:var(--grn2)">'+(r.spo2_recov||'—')+'</td><td style="padding:4px 6px;text-align:center;color:var(--amb2)">'+(r.fc_recov||'—')+'</td></tr>';
+document.getElementById('monSummaryBody').innerHTML = msb;
+document.getElementById('detailsBody').innerHTML =
+'<tr><td>Patient</td><td>'+r.patientName+'</td></tr>'
++'<tr><td>Sexe</td><td>'+(r.sex==='M'?'Homme':'Femme')+'</td></tr>'
++'<tr><td>Age</td><td>'+r.age+' ans</td></tr>'
++'<tr><td>Taille</td><td>'+r.height+' cm</td></tr>'
++'<tr><td>Poids</td><td>'+r.weight+' kg</td></tr>'
++'<tr><td>IMC</td><td>'+r.imc+' kg/m²</td></tr>'
++(r.aide && r.aide === 'Oui' ? '<tr><td style="color:var(--amb2)">Aide technique</td><td style="color:var(--amb2)">'+(r.aideType||'—')+'</td></tr>' : '<tr><td>Aide technique</td><td>Non</td></tr>')
++(r.o2 && r.o2 === 'Oui' ? '<tr><td style="color:var(--grn2)">Dispositif O2</td><td style="color:var(--grn2)">'+(r.o2Type==='Continu' ? 'Continu '+r.o2Debit+'L/min — '+r.o2Modele : r.o2Type==='Pulse' ? 'Pulse consigne '+r.o2Consigne+' — '+r.o2Modele : '—')+'</td></tr>' : '<tr><td>Dispositif O2</td><td>Non</td></tr>')
++'<tr><td>D. predite</td><td>'+Math.round(r.pred)+' m</td></tr>'
++'<tr><td>ET</td><td>± '+r.sd+' m</td></tr>'
++'<tr><td>Limite inferieure</td><td>'+Math.round(r.limInf)+' m</td></tr>'
++'<tr><td>Tours</td><td>'+r.lapsCount+' × '+r.lapDist+'m = '+r.tourDist+'m</td></tr>'
++'<tr><td>Partiel</td><td>'+r.partial+' m</td></tr>'
++'<tr><td>Total</td><td>'+r.distance+' m</td></tr>'
++(r.stoppedAt != null ? '<tr><td style="color:var(--red2)">Test arrêté à</td><td style="color:var(--red2);font-weight:700">'+fmt(r.stoppedAt)+'</td></tr>' : '')
++(r.pauses && r.pauses.length > 0 ? '<tr><td style="color:var(--amb2)">Pauses ('+r.pauses.length+')</td><td style="color:var(--amb2)">'+ r.pauses.map(function(p){var mm=Math.floor(p.at/60),ss=p.at%60; return (mm<10?'0':'')+mm+'m'+(ss<10?'0':'')+ss+'s → '+p.duration+'s';}).join(' | ')+'</td></tr>' : '')
++'<tr><td>Vitesse</td><td>'+r.vitKmh+'</td></tr>'
++'<tr><td>% VP</td><td>'+(r.distance>0?r.pct.toFixed(0)+'%':'—')+'</td></tr>'
++'<tr><td>Dyspnee</td><td>'+(r.dysp_pre||'—')+' → '+(r.dysp_post||'—')+'</td></tr>'
++'<tr><td>SpO2</td><td>'+(r.spo2_pre||'—')+' → '+(r.spo2_post||'—')+' → '+(r.spo2_recov||'—')+'</td></tr>'
++'<tr><td>FC</td><td>'+(r.fc_pre||'—')+' → '+(r.fc_post||'—')+' → '+(r.fc_recov||'—')+'</td></tr>'
++(r.remarks ? '<tr><td>Remarques</td><td style="text-align:left">'+r.remarks+'</td></tr>' : '');
+document.getElementById('resultsSection').classList.remove('hidden');
+document.getElementById('resultsSection').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function exportPDF(){
+if(!lastResults){
+showToast('Calculez les resultats d\'abord', 'err');
+return;
+}
+if(window.jspdf && window.jspdf.jsPDF){
+renderPDF();
+}else{
+var s = document.createElement('script');
+s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+s.onload = renderPDF;
+s.onerror = function(){ showToast('Impossible de charger le module PDF', 'err'); };
+document.head.appendChild(s);
+}
+}
+
+function renderPDF(){
+var r = lastResults;
+var jsPDF = window.jspdf.jsPDF;
+var doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+var today = new Date().toLocaleDateString('fr-FR', {year:'numeric', month:'long', day:'numeric'});
+var pageW = 210;
+var margin = 15;
+var y = 20;
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(18);
+doc.setTextColor(30, 30, 30);
+doc.text('Test de Marche 6 Minutes', margin, y);
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(9);
+doc.setTextColor(100, 100, 100);
+doc.text('Enright & Sherrill (1998)', margin, y + 6);
+doc.setFontSize(8);
+doc.text(today, pageW - margin, y + 6, {align:'right'});
+doc.setDrawColor(59, 130, 246);
+doc.setLineWidth(0.8);
+doc.line(margin, y + 12, pageW - margin, y + 12);
+y += 22;
+doc.setFillColor(248, 250, 252);
+doc.roundedRect(margin, y, pageW - 2*margin, 28, 2, 2, 'F');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(10);
+doc.setTextColor(59, 130, 246);
+doc.text('PATIENT', margin + 4, y + 6);
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(9);
+doc.setTextColor(50, 50, 50);
+var patientInfo = [
+['Nom', r.patientName],
+['Sexe', r.sex === 'M' ? 'Homme' : 'Femme'],
+['Age', r.age + ' ans'],
+['Taille', r.height + ' cm'],
+['Poids', r.weight + ' kg'],
+['IMC', r.imc + ' kg/m²']
+];
+for(var i = 0; i < patientInfo.length; i++){
+var col = i < 3 ? 0 : 1;
+var rowIdx = i < 3 ? i : i - 3;
+var xPos = margin + 4 + col * 90;
+var yPos = y + 12 + rowIdx * 5;
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(8);
+doc.setTextColor(100, 100, 100);
+doc.text(patientInfo[i][0], xPos, yPos);
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(9);
+doc.setTextColor(30, 30, 30);
+doc.text(String(patientInfo[i][1]), xPos + 25, yPos);
+}
+y += 34;
+// Aide technique & O2 (si applicable)
+var aideStr = (r.aide === 'Oui' && r.aideType) ? r.aideType : null;
+var o2Str = null;
+if(r.o2 === 'Oui'){
+if(r.o2Type === 'Continu') o2Str = 'O2 Continu ' + r.o2Debit + ' L/min' + (r.o2Modele ? ' — ' + r.o2Modele : '');
+else if(r.o2Type === 'Pulse') o2Str = 'O2 Pulse consigne ' + r.o2Consigne + (r.o2Modele ? ' — ' + r.o2Modele : '');
+}
+if(aideStr || o2Str){
+var infoRowH = 6;
+doc.setFillColor(255, 251, 235);
+doc.roundedRect(margin, y, pageW - 2*margin, infoRowH * (aideStr && o2Str ? 2 : 1) + 2, 2, 2, 'F');
+doc.setDrawColor(245, 158, 11);
+doc.roundedRect(margin, y, pageW - 2*margin, infoRowH * (aideStr && o2Str ? 2 : 1) + 2, 2, 2, 'S');
+var yi = y + 4.5;
+if(aideStr){
+doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(180, 120, 0);
+doc.text('Aide technique :', margin + 4, yi);
+doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(120, 80, 0);
+doc.text(aideStr, margin + 36, yi);
+yi += infoRowH;
+}
+if(o2Str){
+doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(16, 120, 80);
+doc.text('Dispositif O2 :', margin + 4, yi);
+doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(10, 100, 60);
+doc.text(o2Str, margin + 32, yi);
+}
+y += infoRowH * (aideStr && o2Str ? 2 : 1) + 6;
+}
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(10);
+doc.setTextColor(16, 185, 129);
+doc.text('RESULTATS PRINCIPAUX', margin, y);
+y += 4;
+var colW = (pageW - 2*margin) / 6;
+var rowH = 8;
+doc.setFillColor(59, 130, 246);
+doc.rect(margin, y, pageW - 2*margin, rowH, 'F');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(7);
+doc.setTextColor(255, 255, 255);
+var headers = ['Distance predite', 'Distance reelle', 'Vitesse moy.', 'Ecart', '% Valeur predite', 'Limite inf.'];
+headers.forEach(function(h, i){
+doc.text(h, margin + colW * i + colW/2, y + 5, {align:'center'});
+});
+y += rowH;
+doc.setFillColor(255, 255, 255);
+doc.rect(margin, y, pageW - 2*margin, rowH, 'F');
+doc.setDrawColor(220, 220, 220);
+doc.rect(margin, y, pageW - 2*margin, rowH, 'S');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(10);
+doc.setTextColor(30, 30, 30);
+var values = [
+Math.round(r.pred) + ' m',
+r.distance > 0 ? Math.round(r.distance) + ' m' : '—',
+r.vitKmh || '—',
+r.distance > 0 ? (r.ecart >= 0 ? '+' : '') + Math.round(r.ecart) + ' m' : '—',
+r.distance > 0 ? r.pct.toFixed(0) + '%' : '—',
+Math.round(r.limInf != null ? r.limInf : (r.pred - r.sd)) + ' m'
+];
+var valColors = [[59,130,246],[16,185,129],[100,100,100],[245,158,11],[30,30,30],[239,68,68]];
+values.forEach(function(v, i){
+doc.setTextColor(valColors[i][0], valColors[i][1], valColors[i][2]);
+doc.text(v, margin + colW * i + colW/2, y + 5.5, {align:'center'});
+});
+y += rowH + 6;
+var interpColor, interpText, interpBg;
+if(r.distance > 0 && r.pct >= 84){
+interpColor = [16, 185, 129]; interpText = 'Capacite normale (>= 84% VP)'; interpBg = [236, 253, 245];
+}else if(r.distance > 0 && r.pct >= 70){
+interpColor = [245, 158, 11]; interpText = 'Capacite diminuee (70-84% VP)'; interpBg = [255, 251, 235];
+}else if(r.distance > 0){
+interpColor = [239, 68, 68]; interpText = 'Capacite reduite (< 70% VP)'; interpBg = [254, 242, 242];
+}else{
+interpColor = [100, 100, 100]; interpText = 'Distance non renseignee'; interpBg = [245, 245, 245];
+}
+doc.setFillColor(interpBg[0], interpBg[1], interpBg[2]);
+doc.roundedRect(margin, y, pageW - 2*margin, 8, 2, 2, 'F');
+doc.setDrawColor(interpColor[0], interpColor[1], interpColor[2]);
+doc.roundedRect(margin, y, pageW - 2*margin, 8, 2, 2, 'S');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(9);
+doc.setTextColor(interpColor[0], interpColor[1], interpColor[2]);
+doc.text(interpText, pageW/2, y + 5.5, {align:'center'});
+y += 14;
+if(r.stoppedAt != null){
+doc.setFillColor(254, 242, 242);
+doc.roundedRect(margin, y, pageW - 2*margin, 8, 2, 2, 'F');
+doc.setDrawColor(239, 68, 68);
+doc.roundedRect(margin, y, pageW - 2*margin, 8, 2, 2, 'S');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(9);
+doc.setTextColor(239, 68, 68);
+var mm = Math.floor(r.stoppedAt/60), ss = r.stoppedAt%60;
+doc.text('⚠ Test arrêté à ' + (mm<10?'0':'')+mm + 'min ' + (ss<10?'0':'')+ss + 's', pageW/2, y + 5.5, {align:'center'});
+y += 12;
+}
+if(r.pauses && r.pauses.length > 0){
+var pauseRowH = 6;
+doc.setFillColor(255, 251, 235);
+doc.roundedRect(margin, y, pageW - 2*margin, pauseRowH, 2, 2, 'F');
+doc.setDrawColor(245, 158, 11);
+doc.roundedRect(margin, y, pageW - 2*margin, pauseRowH, 2, 2, 'S');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(8);
+doc.setTextColor(245, 158, 11);
+doc.text('Pauses : ' + r.pauses.length, margin + 4, y + 4.2);
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(7);
+var pauseSummary = r.pauses.map(function(p, idx){
+var mm = Math.floor(p.at/60), ss = p.at%60;
+return 'P'+(idx+1)+' a '+(mm<10?'0':'')+mm+'m'+(ss<10?'0':'')+ss+'s ('+p.duration+'s)';
+}).join('   ');
+doc.text(pauseSummary, pageW - margin - 4, y + 4.2, {align:'right'});
+y += pauseRowH + 4;
+}
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(10);
+doc.setTextColor(245, 158, 11);
+doc.text('DETAIL DISTANCE', margin, y);
+y += 4;
+doc.setFillColor(248, 250, 252);
+doc.roundedRect(margin, y, pageW - 2*margin, 12, 2, 2, 'F');
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(9);
+doc.setTextColor(50, 50, 50);
+doc.text('Tours complets : ' + r.lapsCount + ' × ' + r.lapDist + 'm = ' + r.tourDist + 'm', margin + 4, y + 5);
+doc.text('Partiel : ' + r.partial + 'm', margin + 4, y + 10);
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(10);
+doc.setTextColor(16, 185, 129);
+doc.text('Total : ' + r.distance + ' m', pageW - margin - 4, y + 7.5, {align:'right'});
+y += 18;
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(10);
+doc.setTextColor(139, 92, 246);
+doc.text('MONITORING', margin, y);
+y += 4;
+var monColW = (pageW - 2*margin) / 4;
+var monRowH = 7;
+doc.setFillColor(139, 92, 246);
+doc.rect(margin, y, pageW - 2*margin, monRowH, 'F');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(7);
+doc.setTextColor(255, 255, 255);
+var monHeaders = ['Temps', 'SpO2 (%)', 'FC (bpm)', 'Dyspnee'];
+monHeaders.forEach(function(h, i){
+var x = margin + monColW * i + monColW/2;
+doc.text(h, x, y + 4.5, {align:'center'});
+});
+y += monRowH;
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(8);
+var dyspValues = [r.dysp_pre, '', '', '', '', '', r.dysp_post];
+r.monData.forEach(function(row, i){
+var bgColor = i % 2 === 0 ? [255, 255, 255] : [248, 250, 252];
+doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
+doc.rect(margin, y, pageW - 2*margin, monRowH, 'F');
+doc.setDrawColor(230, 230, 230);
+doc.line(margin, y + monRowH, pageW - margin, y + monRowH);
+doc.setTextColor(50, 50, 50);
+doc.text(row.label, margin + monColW * 0 + monColW/2, y + 4.5, {align:'center'});
+doc.setTextColor(16, 185, 129);
+doc.text(row.spo2 || '—', margin + monColW * 1 + monColW/2, y + 4.5, {align:'center'});
+doc.setTextColor(245, 158, 11);
+doc.text(row.fc || '—', margin + monColW * 2 + monColW/2, y + 4.5, {align:'center'});
+doc.setTextColor(139, 92, 246);
+var dysp = dyspValues[i] || '';
+doc.text(dysp ? dysp + '/10' : '—', margin + monColW * 3 + monColW/2, y + 4.5, {align:'center'});
+y += monRowH;
+});
+doc.setFillColor(245, 243, 255);
+doc.rect(margin, y, pageW - 2*margin, monRowH, 'F');
+doc.setFont('helvetica', 'bold');
+doc.setTextColor(139, 92, 246);
+doc.text('Recup 3min', margin + monColW * 0 + monColW/2, y + 4.5, {align:'center'});
+doc.setFont('helvetica', 'normal');
+doc.setTextColor(16, 185, 129);
+doc.text(r.spo2_recov || '—', margin + monColW * 1 + monColW/2, y + 4.5, {align:'center'});
+doc.setTextColor(245, 158, 11);
+doc.text(r.fc_recov || '—', margin + monColW * 2 + monColW/2, y + 4.5, {align:'center'});
+y += monRowH + 8;
+
+// === NOUVEAU : Remarques dans le PDF ===
+if(r.remarks && r.remarks.trim() !== ''){
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(10);
+doc.setTextColor(59, 130, 246);
+doc.text('REMARQUES', margin, y);
+y += 4;
+doc.setFillColor(248, 250, 252);
+doc.roundedRect(margin, y, pageW - 2*margin, 2, 2, 2, 'F');
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(9);
+doc.setTextColor(50, 50, 50);
+var splitRemarks = doc.splitTextToSize(r.remarks, pageW - 2*margin - 8);
+var remarksHeight = splitRemarks.length * 5 + 8;
+doc.text(splitRemarks, margin + 4, y + 6);
+y += remarksHeight + 6;
+}
+// === FIN NOUVEAU ===
+
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(10);
+doc.setTextColor(59, 130, 246);
+doc.text('CONSTANTES', margin, y);
+y += 4;
+// 3-column layout for SpO2/FC/Dyspnée
+var c3W = (pageW - 2*margin) / 3;
+var constRowH = 6;
+// Header
+doc.setFillColor(59, 130, 246);
+doc.rect(margin, y, pageW - 2*margin, constRowH, 'F');
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(7);
+doc.setTextColor(255, 255, 255);
+doc.text('REPOS', margin + c3W * 0 + c3W/2, y + 4, {align:'center'});
+doc.text('FIN', margin + c3W * 1 + c3W/2, y + 4, {align:'center'});
+doc.text('RECUP 3min', margin + c3W * 2 + c3W/2, y + 4, {align:'center'});
+y += constRowH;
+// SpO2 row
+doc.setFillColor(255, 255, 255);
+doc.rect(margin, y, pageW - 2*margin, constRowH, 'F');
+doc.setDrawColor(230, 230, 230);
+doc.line(margin, y + constRowH, pageW - margin, y + constRowH);
+doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(100,100,100);
+doc.text('SpO2 (%)', margin + 3, y + 4.5);
+doc.text('SpO2 (%)', margin + c3W + 3, y + 4.5);
+doc.text('SpO2 (%)', margin + c3W*2 + 3, y + 4.5);
+doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(16,185,129);
+doc.text(r.spo2_pre || '—', margin + c3W - 3, y + 4.5, {align:'right'});
+doc.text(r.spo2_post || '—', margin + c3W*2 - 3, y + 4.5, {align:'right'});
+doc.text(r.spo2_recov || '—', margin + c3W*3 - 3, y + 4.5, {align:'right'});
+y += constRowH;
+// FC row
+doc.setFillColor(248, 250, 252);
+doc.rect(margin, y, pageW - 2*margin, constRowH, 'F');
+doc.setDrawColor(230, 230, 230);
+doc.line(margin, y + constRowH, pageW - margin, y + constRowH);
+doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(100,100,100);
+doc.text('FC (bpm)', margin + 3, y + 4.5);
+doc.text('FC (bpm)', margin + c3W + 3, y + 4.5);
+doc.text('FC (bpm)', margin + c3W*2 + 3, y + 4.5);
+doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(245,158,11);
+doc.text(r.fc_pre || '—', margin + c3W - 3, y + 4.5, {align:'right'});
+doc.text(r.fc_post || '—', margin + c3W*2 - 3, y + 4.5, {align:'right'});
+doc.text(r.fc_recov || '—', margin + c3W*3 - 3, y + 4.5, {align:'right'});
+y += constRowH;
+// Dyspnée row (repos + fin only, recup = empty)
+doc.setFillColor(255, 255, 255);
+doc.rect(margin, y, pageW - 2*margin, constRowH, 'F');
+doc.setDrawColor(230, 230, 230);
+doc.line(margin, y + constRowH, pageW - margin, y + constRowH);
+doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(100,100,100);
+doc.text('Dyspnee /10', margin + 3, y + 4.5);
+doc.text('Dyspnee /10', margin + c3W + 3, y + 4.5);
+doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(139,92,246);
+doc.text((r.dysp_pre || '—') + '/10', margin + c3W - 3, y + 4.5, {align:'right'});
+doc.text((r.dysp_post || '—') + '/10', margin + c3W*2 - 3, y + 4.5, {align:'right'});
+y += constRowH;
+y += 10;
+doc.setDrawColor(200, 200, 200);
+doc.setLineWidth(0.3);
+doc.line(margin, y, pageW - margin, y);
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(7);
+doc.setTextColor(150, 150, 150);
+doc.text('Enright PL, Sherrill DL. Reference equations for the six-minute walk in healthy adults. Am J Respir Crit Care Med. 1998;158(5):1384-1387', margin, y + 5);
+var fileName = 'TM6_' + r.patientName.replace(/\s+/g, '_') + '.pdf';
+if(currentDossierId){
+var dossiers = getDossiers();
+var dossier = dossiers.find(function(d){return d.id === currentDossierId;});
+if(dossier){
+fileName = 'TM6_' + dossier.name + '.pdf';
+}
+}
+doc.save(fileName);
+}
+
+document.getElementById('minModal').addEventListener('click', function(e){
+if(e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e){
+if(e.key === 'Escape'){
+closeModal();
+if(currentDossierId) closeDossierDetail();
+}
+});
+</script>
+
+<script>
+// === PWA : Bouton Install ===
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  var installBtn = document.getElementById('pwaInstallBtn');
+  if(installBtn) installBtn.style.display = 'inline-flex';
+});
+window.addEventListener('appinstalled', function(){
+  deferredPrompt = null;
+  var installBtn = document.getElementById('pwaInstallBtn');
+  if(installBtn) installBtn.style.display = 'none';
+  showToast('Application installée avec succès !', 'ok');
+});
+function installPWA(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(result){
+    if(result.outcome === 'accepted') showToast('Installation en cours…', 'ok');
+    deferredPrompt = null;
+  });
+}
+
+// === PWA : Service Worker ===
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js', {scope:'./'})
+    .then(function(reg){ console.log('[TM6 PWA] SW enregistré', reg.scope); })
+    .catch(function(e){ console.warn('[TM6 PWA] SW échec:', e); });
+}
+</script>
+
+
+<!-- === SECTION DOSSIERS === -->
+<div id="dossiersSection" class="dossiers-section">
+
+<div class="dossiers-top">
+<div class="dossiers-toolbar">
+<div class="search-bar">
+<input type="text" id="dossierSearch" placeholder="Rechercher..." oninput="filterDossiers()">
+<button class="btn btn-b" style="padding:6px 9px;font-size:9px" onclick="clearSearch()">✕</button>
+</div>
+<button class="btn btn-json" style="padding:6px 9px;font-size:9px" onclick="exportAllDossiersJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
+<button class="btn btn-json" style="padding:6px 9px;font-size:9px;background:linear-gradient(135deg,var(--pur2),#6d28d9)" onclick="importDossiersJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 14 12 9 7 14"/><line x1="12" y1="9" x2="12" y2="21"/></svg>Import</button>
+<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImportFile(event)">
+</div>
+</div>
+
+<!-- Liste scrollable -->
+<div class="dossiers-scroll" id="dossiersScrollArea">
+<div class="dossiers-list" id="dossiersList"></div>
+</div>
+
+<!-- Vue détail d'un dossier -->
+<div id="dossierDetail" class="hidden dossier-detail-wrap">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+<div style="font-family:'DM Serif Display',serif;font-size:15px;color:#fff">Dossier — <span id="detailPatientName">Patient</span></div>
+<div style="display:flex;gap:5px;flex-wrap:wrap">
+<button class="btn btn-o" style="padding:5px 9px;font-size:9px" onclick="closeDossierDetail()">← Retour</button>
+<button class="btn-pdf" onclick="exportPDFFromDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>PDF</button>
+<button class="btn btn-r" style="padding:5px 9px;font-size:9px" onclick="deleteDossier()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Suppr.</button>
+</div>
+</div>
+<div class="res-grid">
+<div class="res-card highlight"><div class="rv" id="detailPredit">—</div><div class="rl">Distance predite</div></div>
+<div class="res-card highlight-grn"><div class="rv grn" id="detailReel">—</div><div class="rl">Distance reelle</div></div>
+<div class="rc"><div class="rcl">Ecart</div><div class="rcv" id="detailEcart">—</div></div>
+</div>
+<div class="gauge-wrap">
+<div class="lbl" style="margin-bottom:8px"><span class="dot g"></span>% valeur predite</div>
+<div class="gbw"><div class="gtrack"></div><div class="gfill" id="detailGaugeFill"></div><div class="gneedle" id="detailGaugeNeedle" style="left:0%"></div></div>
+<div class="glabels"><span>0%</span><span>50%</span><span>70%</span><span>100%</span><span>130%</span></div>
+<div class="pct-big" id="detailPct">—</div>
+<div class="pct-sub">% de la valeur predite</div>
+<div class="interp" id="detailInterpretation"></div>
+</div>
+<div class="card" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot b"></span>Remarques</div>
+<div id="detailRemarks" style="font-family:'Sora',sans-serif;font-size:12px;color:var(--txt);line-height:1.6;padding:8px;background:var(--sur2);border-radius:6px;min-height:60px">—</div>
+</div>
+<div class="card" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot b"></span>Details</div>
+<table class="det-t"><thead><tr><th>Parametre</th><th>Valeur</th></tr></thead><tbody id="detailBody"></tbody></table>
+</div>
+</div>
+</div>
+<!-- === FIN SECTION DOSSIERS === -->
+</body>
+</html>
