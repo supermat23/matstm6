@@ -953,17 +953,39 @@ remarksEl.textContent = '—';
 }
 var r = dossier.data;
 document.getElementById('detailBody').innerHTML =
-'<tr><td>Patient</td><td>'+r.patientName+'</td></tr>'+
-'<tr><td>Sexe</td><td>'+(r.sex==='M'?'Homme':'Femme')+'</td></tr>'+
-'<tr><td>Age</td><td>'+r.age+' ans</td></tr>'+
-'<tr><td>Taille</td><td>'+r.height+' cm</td></tr>'+
-'<tr><td>Poids</td><td>'+r.weight+' kg</td></tr>'+
-'<tr><td>IMC</td><td>'+r.imc+' kg/m²</td></tr>'+
-'<tr><td>D. prédictive</td><td>'+Math.round(r.pred)+' m</td></tr>'+
-'<tr><td>Distance</td><td>'+r.distance+' m</td></tr>'+
-'<tr><td>% VP</td><td>'+(r.distance>0?r.pct.toFixed(0)+'%':'—')+'</td></tr>'+
-'<tr><td>Limite inferieure</td><td>'+(r.limInf!=null?Math.round(r.limInf)+' m':'—')+'</td></tr>'+
-'<tr><td>Vitesse</td><td>'+r.vitKmh+'</td></tr>';
+'<tr><td>Patient</td><td>'+r.patientName+'</td></tr>'
++'<tr><td>Sexe</td><td>'+(r.sex==='M'?'Homme':'Femme')+'</td></tr>'
++'<tr><td>Age</td><td>'+r.age+' ans</td></tr>'
++'<tr><td>Taille</td><td>'+r.height+' cm</td></tr>'
++'<tr><td>Poids</td><td>'+r.weight+' kg</td></tr>'
++'<tr><td>IMC</td><td>'+r.imc+' kg/m²</td></tr>'
++(r.aide && r.aide==='Oui' ? '<tr><td style="color:var(--amb2)">Aide technique</td><td style="color:var(--amb2)">'+(r.aideType||'—')+'</td></tr>' : '<tr><td>Aide technique</td><td>Non</td></tr>')
++(r.o2 && r.o2==='Oui' ? '<tr><td style="color:var(--grn2)">Dispositif O²</td><td style="color:var(--grn2)">'+(r.o2Type==='Continu' ? 'Continu '+r.o2Debit+'L/min — '+r.o2Modele : r.o2Type==='Pulse' ? 'Pulse consigne '+r.o2Consigne+' — '+r.o2Modele : '—')+'</td></tr>' : '<tr><td>Dispositif O²</td><td>Non</td></tr>')
++'<tr><td>D. prédictive</td><td>'+Math.round(r.pred)+' m</td></tr>'
++'<tr><td>ET</td><td>± '+r.sd+' m</td></tr>'
++'<tr><td>Limite inferieure</td><td>'+(r.limInf!=null?Math.round(r.limInf)+' m':'—')+'</td></tr>'
++'<tr><td>Tours</td><td>'+r.lapsCount+' × '+r.lapDist+'m = '+r.tourDist+'m</td></tr>'
++'<tr><td>Partiel</td><td>'+r.partial+' m</td></tr>'
++'<tr><td>Total</td><td>'+r.distance+' m</td></tr>'
++(r.stoppedAt != null ? '<tr><td style="color:var(--red2)">Test arrêté à</td><td style="color:var(--red2);font-weight:700">'+fmt(r.stoppedAt)+'</td></tr>' : '')
++(r.pauses && r.pauses.length > 0 ? '<tr><td style="color:var(--amb2)">Pauses ('+r.pauses.length+')</td><td style="color:var(--amb2)">'+r.pauses.map(function(p){var mm=Math.floor(p.at/60),ss=p.at%60; return (mm<10?'0':'')+mm+'m'+(ss<10?'0':'')+ss+'s → '+p.duration+'s';}).join(' | ')+'</td></tr>' : '')
++'<tr><td>Vitesse</td><td>'+r.vitKmh+'</td></tr>'
++'<tr><td>% VP</td><td>'+(r.distance>0?r.pct.toFixed(0)+'%':'—')+'</td></tr>'
++'<tr><td>Dyspnee</td><td>'+(r.dysp_pre||'—')+' → '+(r.dysp_post||'—')+'</td></tr>'
++'<tr><td>SpO2</td><td>'+(r.spo2_pre||'—')+' → '+(r.spo2_post||'—')+' → '+(r.spo2_recov||'—')+'</td></tr>'
++'<tr><td>FC</td><td>'+(r.fc_pre||'—')+' → '+(r.fc_post||'—')+' → '+(r.fc_recov||'—')+'</td></tr>'
++(r.remarks ? '<tr><td>Remarques</td><td style="text-align:left">'+r.remarks+'</td></tr>' : '');
+// Monitoring
+var msb = '';
+if(r.monData && r.monData.length){
+r.monData.forEach(function(row){
+msb += '<tr><td style="padding:4px 6px;border-bottom:1px solid rgba(30,45,71,0.3);font-size:9px;color:var(--mut)">'+row.label+'</td>'
++'<td style="padding:4px 6px;border-bottom:1px solid rgba(30,45,71,0.3);text-align:center;color:var(--grn2)">'+(row.spo2||'—')+'</td>'
++'<td style="padding:4px 6px;border-bottom:1px solid rgba(30,45,71,0.3);text-align:center;color:var(--amb2)">'+(row.fc||'—')+'</td></tr>';
+});
+}
+msb += '<tr><td style="padding:4px 6px;color:var(--pur2)">Recup</td><td style="padding:4px 6px;text-align:center;color:var(--grn2)">'+(r.spo2_recov||'—')+'</td><td style="padding:4px 6px;text-align:center;color:var(--amb2)">'+(r.fc_recov||'—')+'</td></tr>';
+document.getElementById('detailMonBody').innerHTML = msb;
 document.getElementById('dossierDetail').classList.remove('hidden');
 document.getElementById('dossiersScrollArea').style.display = 'none';
 window.scrollTo(0, 0);
@@ -1454,12 +1476,17 @@ if(!lastResults){
 showToast('Calculez les resultats d\'abord', 'err');
 return;
 }
+document.getElementById('pdfChoiceModal').classList.add('show');
+}
+function exportPDFWithMode(mode){
+document.getElementById('pdfChoiceModal').classList.remove('show');
+var fn = mode === 'bw' ? renderPDF_BW : renderPDF;
 if(window.jspdf && window.jspdf.jsPDF){
-renderPDF();
+fn();
 }else{
 var s = document.createElement('script');
 s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-s.onload = renderPDF;
+s.onload = fn;
 s.onerror = function(){ showToast('Impossible de charger le module PDF', 'err'); };
 document.head.appendChild(s);
 }
@@ -1580,6 +1607,15 @@ r.distance > 0 ? r.pct.toFixed(0) + '%' : '—',
 Math.round(r.limInf != null ? r.limInf : (r.pred - r.sd)) + ' m'
 ];
 var valColors = [[59,130,246],[16,185,129],[100,100,100],[245,158,11],[30,30,30],[239,68,68]];
+// Encadré vert sur la colonne "Distance reelle" (index 1)
+if(r.distance > 0){
+doc.setFillColor(220, 252, 231);
+doc.rect(margin + colW * 1, y, colW, rowH, 'F');
+doc.setDrawColor(16, 185, 129);
+doc.setLineWidth(0.8);
+doc.rect(margin + colW * 1, y, colW, rowH, 'S');
+doc.setLineWidth(0.3);
+}
 values.forEach(function(v, i){
 doc.setTextColor(valColors[i][0], valColors[i][1], valColors[i][2]);
 doc.text(v, margin + colW * i + colW/2, y + 5.5, {align:'center'});
@@ -1858,6 +1894,7 @@ navigator.serviceWorker.register('./sw.js', {scope:'./'})
 <div style="font-family:'DM Serif Display',serif;font-size:15px;color:#fff">Dossier — <span id="detailPatientName">Patient</span></div>
 <div style="display:flex;gap:5px;flex-wrap:wrap">
 <button class="btn btn-o" style="padding:5px 9px;font-size:9px" onclick="closeDossierDetail()">← Retour</button>
+<button class="btn btn-a" style="padding:5px 9px;font-size:9px" onclick="openEditDossier()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modifier</button>
 <button class="btn-pdf" onclick="exportPDFFromDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>PDF</button>
 <button class="btn btn-r" style="padding:5px 9px;font-size:9px" onclick="deleteDossier()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Suppr.</button>
 </div>
@@ -1880,11 +1917,664 @@ navigator.serviceWorker.register('./sw.js', {scope:'./'})
 <div id="detailRemarks" style="font-family:'Sora',sans-serif;font-size:12px;color:var(--txt);line-height:1.6;padding:8px;background:var(--sur2);border-radius:6px;min-height:60px">—</div>
 </div>
 <div class="card" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot g"></span>Monitoring</div>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:300px">
+<thead><tr>
+<th style="background:var(--sur2);padding:5px 7px;text-align:left;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:0.8px;color:var(--mut);border-bottom:1px solid var(--brd)">Temps</th>
+<th style="background:var(--sur2);padding:5px 7px;text-align:center;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:0.8px;color:var(--mut);border-bottom:1px solid var(--brd)">SpO2</th>
+<th style="background:var(--sur2);padding:5px 7px;text-align:center;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:0.8px;color:var(--mut);border-bottom:1px solid var(--brd)">FC</th>
+</tr></thead>
+<tbody id="detailMonBody"></tbody>
+</table></div>
+</div>
+<div class="card" style="margin-bottom:8px">
 <div class="lbl" style="margin-bottom:6px"><span class="dot b"></span>Details</div>
 <table class="det-t"><thead><tr><th>Parametre</th><th>Valeur</th></tr></thead><tbody id="detailBody"></tbody></table>
 </div>
 </div>
 </div>
-<!-- === FIN SECTION DOSSIERS === -->
+<!-- === MODAL CHOIX PDF === -->
+<div id="pdfChoiceModal" class="modal-ov" style="z-index:3000">
+<div class="modal-box" style="max-width:360px;width:92%;padding:24px 20px;text-align:center">
+<div style="font-family:'DM Serif Display',serif;font-size:17px;color:#fff;margin-bottom:6px">Exporter en PDF</div>
+<div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px">Choisir le format</div>
+<div style="display:flex;gap:10px">
+<button onclick="exportPDFWithMode('color')" style="flex:1;padding:14px 8px;border-radius:10px;border:2px solid var(--blue);background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(16,185,129,0.1));cursor:pointer;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+<div style="font-size:22px;margin-bottom:6px">🎨</div>
+<div style="font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:#fff;margin-bottom:4px">Couleur</div>
+<div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--txt2)">Version actuelle<br>avec couleurs</div>
+</button>
+<button onclick="exportPDFWithMode('bw')" style="flex:1;padding:14px 8px;border-radius:10px;border:2px solid var(--brd2);background:rgba(255,255,255,0.04);cursor:pointer;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+<div style="font-size:22px;margin-bottom:6px">🖨️</div>
+<div style="font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:#fff;margin-bottom:4px">Noir & Blanc</div>
+<div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--txt2)">Optimisé pour<br>impression</div>
+</button>
+</div>
+<button onclick="document.getElementById('pdfChoiceModal').classList.remove('show')" class="btn btn-o" style="margin-top:14px;width:100%;justify-content:center">Annuler</button>
+</div>
+</div>
+<!-- === FIN MODAL CHOIX PDF === -->
+
+<script>
+// === PDF NOIR & BLANC ===
+function renderPDF_BW(){
+var r = lastResults;
+var jsPDF = window.jspdf.jsPDF;
+var doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+var today = new Date().toLocaleDateString('fr-FR', {year:'numeric', month:'long', day:'numeric'});
+var pageW = 210;
+var margin = 15;
+var y = 18;
+
+// Helpers couleurs NB
+var C = {
+black:   [0,0,0],
+dark:    [30,30,30],
+mid:     [80,80,80],
+light:   [130,130,130],
+pale:    [180,180,180],
+bg1:     [245,245,245],
+bg2:     [230,230,230],
+bgDark:  [50,50,50],
+white:   [255,255,255],
+border:  [160,160,160]
+};
+function fill(c){ doc.setFillColor(c[0],c[1],c[2]); }
+function stroke(c){ doc.setDrawColor(c[0],c[1],c[2]); }
+function textC(c){ doc.setTextColor(c[0],c[1],c[2]); }
+
+// ── EN-TÊTE ──────────────────────────────────────────────
+doc.setFont('helvetica','bold');
+doc.setFontSize(20);
+textC(C.black);
+doc.text('Test de Marche 6 Minutes', margin, y);
+doc.setFont('helvetica','normal');
+doc.setFontSize(9);
+textC(C.mid);
+doc.text('Enright & Sherrill (1998)', margin, y+6);
+doc.setFontSize(8);
+doc.text(today, pageW-margin, y+6, {align:'right'});
+stroke(C.black);
+doc.setLineWidth(1.2);
+doc.line(margin, y+10, pageW-margin, y+10);
+doc.setLineWidth(0.3);
+y += 18;
+
+// ── PATIENT ──────────────────────────────────────────────
+fill(C.bgDark); stroke(C.bgDark);
+doc.roundedRect(margin, y, pageW-2*margin, 7, 1, 1, 'F');
+doc.setFont('helvetica','bold'); doc.setFontSize(9); textC(C.white);
+doc.text('PATIENT', margin+4, y+5);
+y += 7;
+fill(C.bg1); stroke(C.border);
+doc.roundedRect(margin, y, pageW-2*margin, 22, 1, 1, 'FD');
+var pInfo = [
+['Nom', r.patientName],
+['Sexe', r.sex==='M'?'Homme':'Femme'],
+['Âge', r.age+' ans'],
+['Taille', r.height+' cm'],
+['Poids', r.weight+' kg'],
+['IMC', r.imc+' kg/m²']
+];
+for(var i=0;i<pInfo.length;i++){
+var col=i<3?0:1, ri=i<3?i:i-3;
+var xp=margin+4+col*90, yp=y+6+ri*5.5;
+doc.setFont('helvetica','normal'); doc.setFontSize(7.5); textC(C.light);
+doc.text(pInfo[i][0], xp, yp);
+doc.setFont('helvetica','bold'); doc.setFontSize(8.5); textC(C.dark);
+doc.text(String(pInfo[i][1]), xp+26, yp);
+}
+y += 28;
+
+// ── AIDE & O² ────────────────────────────────────────────
+var aideStr=(r.aide==='Oui'&&r.aideType)?r.aideType:null;
+var o2Str=null;
+if(r.o2==='Oui'){
+if(r.o2Type==='Continu') o2Str='O² Continu '+r.o2Debit+' L/min'+(r.o2Modele?' — '+r.o2Modele:'');
+else if(r.o2Type==='Pulse') o2Str='O² Pulsé consigne '+r.o2Consigne+(r.o2Modele?' — '+r.o2Modele:'');
+}
+if(aideStr||o2Str){
+var nbLines=(aideStr&&o2Str)?2:1;
+fill(C.bg2); stroke(C.border);
+doc.roundedRect(margin, y, pageW-2*margin, 6*nbLines+4, 1, 1, 'FD');
+var yi2=y+4.5;
+if(aideStr){
+doc.setFont('helvetica','bold'); doc.setFontSize(7); textC(C.mid);
+doc.text('Aide technique :', margin+4, yi2);
+doc.setFont('helvetica','normal'); doc.setFontSize(8); textC(C.dark);
+doc.text(aideStr, margin+37, yi2);
+yi2+=6;
+}
+if(o2Str){
+doc.setFont('helvetica','bold'); doc.setFontSize(7); textC(C.mid);
+doc.text('Dispositif O² :', margin+4, yi2);
+doc.setFont('helvetica','normal'); doc.setFontSize(8); textC(C.dark);
+doc.text(o2Str, margin+33, yi2);
+}
+y += 6*nbLines+8;
+}
+
+// ── RÉSULTATS PRINCIPAUX ─────────────────────────────────
+fill(C.bgDark); stroke(C.bgDark);
+doc.roundedRect(margin, y, pageW-2*margin, 7, 1, 1, 'F');
+doc.setFont('helvetica','bold'); doc.setFontSize(9); textC(C.white);
+doc.text('RÉSULTATS PRINCIPAUX', margin+4, y+5);
+y += 7;
+
+var colW=(pageW-2*margin)/6;
+var rowH=9;
+
+// Sous-en-têtes colonnes
+fill(C.bg2); stroke(C.border);
+doc.rect(margin, y, pageW-2*margin, rowH, 'FD');
+var hdrs=['D. prédictive','D. réelle','Vitesse','Écart','% VP','Limite inf.'];
+doc.setFont('helvetica','bold'); doc.setFontSize(6.5); textC(C.mid);
+hdrs.forEach(function(h,i){ doc.text(h, margin+colW*i+colW/2, y+5.5, {align:'center'}); });
+y += rowH;
+
+// Ligne valeurs
+fill(C.white); stroke(C.border);
+doc.rect(margin, y, pageW-2*margin, rowH+2, 'FD');
+// Encadré gras pour Distance réelle (col 1)
+if(r.distance>0){
+stroke(C.black); doc.setLineWidth(1);
+doc.rect(margin+colW*1, y, colW, rowH+2, 'S');
+doc.setLineWidth(0.3);
+}
+var vals=[
+Math.round(r.pred)+' m',
+r.distance>0?Math.round(r.distance)+' m':'—',
+r.vitKmh||'—',
+r.distance>0?(r.ecart>=0?'+':'')+Math.round(r.ecart)+' m':'—',
+r.distance>0?r.pct.toFixed(0)+'%':'—',
+Math.round(r.limInf!=null?r.limInf:(r.pred-r.sd))+' m'
+];
+doc.setFont('helvetica','bold'); doc.setFontSize(9);
+vals.forEach(function(v,i){
+// Distance réelle en gras plus grand
+if(i===1&&r.distance>0){ doc.setFontSize(10); textC(C.black); }
+else { doc.setFontSize(9); textC(C.dark); }
+doc.text(v, margin+colW*i+colW/2, y+6.5, {align:'center'});
+});
+y += rowH+2;
+
+// Interprétation
+var interpText, interpBg;
+if(r.distance>0&&r.pct>=84){ interpText='✓  Capacité normale  (≥ 84% VP)'; interpBg=C.bg1; }
+else if(r.distance>0&&r.pct>=70){ interpText='△  Capacité diminuée  (70–84% VP)'; interpBg=C.bg2; }
+else if(r.distance>0){ interpText='✕  Capacité réduite  (< 70% VP)'; interpBg=C.bg2; }
+else { interpText='Distance non renseignée'; interpBg=C.bg1; }
+fill(interpBg); stroke(C.border);
+doc.roundedRect(margin, y+2, pageW-2*margin, 8, 1, 1, 'FD');
+doc.setFont('helvetica','bold'); doc.setFontSize(9); textC(C.dark);
+doc.text(interpText, pageW/2, y+7.5, {align:'center'});
+y += 16;
+
+// Arrêt anticipé
+if(r.stoppedAt!=null){
+fill(C.bg2); stroke(C.dark);
+doc.roundedRect(margin, y, pageW-2*margin, 7, 1, 1, 'FD');
+doc.setFont('helvetica','bold'); doc.setFontSize(8.5); textC(C.dark);
+var mm2=Math.floor(r.stoppedAt/60), ss2=r.stoppedAt%60;
+doc.text('⚠  Test arrêté à '+(mm2<10?'0':'')+mm2+'min'+(ss2<10?'0':'')+ss2+'s', pageW/2, y+5, {align:'center'});
+y += 11;
+}
+
+// Pauses
+if(r.pauses&&r.pauses.length>0){
+fill(C.bg1); stroke(C.border);
+doc.roundedRect(margin, y, pageW-2*margin, 6, 1, 1, 'FD');
+doc.setFont('helvetica','bold'); doc.setFontSize(7); textC(C.mid);
+doc.text('Pauses : '+r.pauses.length, margin+4, y+4.2);
+doc.setFont('helvetica','normal'); doc.setFontSize(6.5);
+var ps=r.pauses.map(function(p,idx){var mm3=Math.floor(p.at/60),ss3=p.at%60;return 'P'+(idx+1)+' à '+(mm3<10?'0':'')+mm3+'m'+(ss3<10?'0':'')+ss3+'s ('+p.duration+'s)';}).join('   ');
+doc.text(ps, pageW-margin-4, y+4.2, {align:'right'});
+y += 10;
+}
+
+// ── DÉTAIL DISTANCE ──────────────────────────────────────
+fill(C.bgDark); stroke(C.bgDark);
+doc.roundedRect(margin, y, pageW-2*margin, 7, 1, 1, 'F');
+doc.setFont('helvetica','bold'); doc.setFontSize(9); textC(C.white);
+doc.text('DÉTAIL DISTANCE', margin+4, y+5);
+y += 7;
+fill(C.bg1); stroke(C.border);
+doc.roundedRect(margin, y, pageW-2*margin, 13, 1, 1, 'FD');
+doc.setFont('helvetica','normal'); doc.setFontSize(8.5); textC(C.mid);
+doc.text('Tours complets : '+r.lapsCount+' × '+r.lapDist+'m = '+r.tourDist+'m', margin+4, y+5);
+doc.text('Partiel : '+r.partial+'m', margin+4, y+10.5);
+doc.setFont('helvetica','bold'); doc.setFontSize(10); textC(C.black);
+doc.text('Total : '+r.distance+' m', pageW-margin-4, y+8, {align:'right'});
+y += 19;
+
+// ── MONITORING ───────────────────────────────────────────
+fill(C.bgDark); stroke(C.bgDark);
+doc.roundedRect(margin, y, pageW-2*margin, 7, 1, 1, 'F');
+doc.setFont('helvetica','bold'); doc.setFontSize(9); textC(C.white);
+doc.text('MONITORING', margin+4, y+5);
+y += 7;
+var mColW=(pageW-2*margin)/4;
+var mRowH=6.5;
+fill(C.bg2); stroke(C.border);
+doc.rect(margin, y, pageW-2*margin, mRowH, 'FD');
+doc.setFont('helvetica','bold'); doc.setFontSize(7); textC(C.mid);
+['Temps','SpO₂ (%)','FC (bpm)','Dyspnée /10'].forEach(function(h,i){
+doc.text(h, margin+mColW*i+mColW/2, y+4.5, {align:'center'});
+});
+y += mRowH;
+var dyspVals=[r.dysp_pre,'','','','','',r.dysp_post];
+r.monData.forEach(function(row,i){
+fill(i%2===0?C.white:C.bg1); stroke(C.border);
+doc.rect(margin, y, pageW-2*margin, mRowH, 'FD');
+doc.setFont('helvetica', i===0||i===6?'bold':'normal'); doc.setFontSize(8); textC(C.dark);
+doc.text(row.label, margin+mColW*0+mColW/2, y+4.5, {align:'center'});
+doc.setFont('helvetica','normal');
+doc.text(row.spo2||'—', margin+mColW*1+mColW/2, y+4.5, {align:'center'});
+doc.text(row.fc||'—', margin+mColW*2+mColW/2, y+4.5, {align:'center'});
+textC(C.mid);
+var dv=dyspVals[i]||'';
+doc.text(dv?dv+'/10':'—', margin+mColW*3+mColW/2, y+4.5, {align:'center'});
+y += mRowH;
+});
+// Récup
+fill(C.bg2); stroke(C.border);
+doc.rect(margin, y, pageW-2*margin, mRowH, 'FD');
+doc.setFont('helvetica','bold'); doc.setFontSize(8); textC(C.dark);
+doc.text('Récup 3 min', margin+mColW*0+mColW/2, y+4.5, {align:'center'});
+doc.setFont('helvetica','normal'); textC(C.dark);
+doc.text(r.spo2_recov||'—', margin+mColW*1+mColW/2, y+4.5, {align:'center'});
+doc.text(r.fc_recov||'—', margin+mColW*2+mColW/2, y+4.5, {align:'center'});
+y += mRowH+6;
+
+// ── REMARQUES ────────────────────────────────────────────
+if(r.remarks&&r.remarks.trim()!==''){
+fill(C.bgDark); stroke(C.bgDark);
+doc.roundedRect(margin, y, pageW-2*margin, 7, 1, 1, 'F');
+doc.setFont('helvetica','bold'); doc.setFontSize(9); textC(C.white);
+doc.text('REMARQUES', margin+4, y+5);
+y += 7;
+var splitR=doc.splitTextToSize(r.remarks, pageW-2*margin-8);
+var rH=splitR.length*5+8;
+fill(C.bg1); stroke(C.border);
+doc.roundedRect(margin, y, pageW-2*margin, rH, 1, 1, 'FD');
+doc.setFont('helvetica','normal'); doc.setFontSize(9); textC(C.dark);
+doc.text(splitR, margin+4, y+6);
+y += rH+6;
+}
+
+// ── CONSTANTES ───────────────────────────────────────────
+fill(C.bgDark); stroke(C.bgDark);
+doc.roundedRect(margin, y, pageW-2*margin, 7, 1, 1, 'F');
+doc.setFont('helvetica','bold'); doc.setFontSize(9); textC(C.white);
+doc.text('CONSTANTES', margin+4, y+5);
+y += 7;
+var c3W=(pageW-2*margin)/3;
+var cRH=6;
+fill(C.bg2); stroke(C.border);
+doc.rect(margin, y, pageW-2*margin, cRH, 'FD');
+doc.setFont('helvetica','bold'); doc.setFontSize(7); textC(C.mid);
+['REPOS','FIN','RÉCUP 3 min'].forEach(function(h,i){ doc.text(h, margin+c3W*i+c3W/2, y+4, {align:'center'}); });
+y += cRH;
+var cRows=[
+{lbl:'SpO₂ (%)', v1:r.spo2_pre, v2:r.spo2_post, v3:r.spo2_recov},
+{lbl:'FC (bpm)',  v1:r.fc_pre,   v2:r.fc_post,   v3:r.fc_recov},
+{lbl:'Dyspnée /10',v1:r.dysp_pre,v2:r.dysp_post, v3:''}
+];
+cRows.forEach(function(row,i){
+fill(i%2===0?C.white:C.bg1); stroke(C.border);
+doc.rect(margin, y, pageW-2*margin, cRH, 'FD');
+doc.setFont('helvetica','bold'); doc.setFontSize(7); textC(C.light);
+doc.text(row.lbl, margin+3, y+4.5);
+doc.setFont('helvetica','normal'); doc.setFontSize(8.5); textC(C.dark);
+doc.text(row.v1||'—', margin+c3W-4, y+4.5, {align:'right'});
+doc.text(row.v2||'—', margin+c3W*2-4, y+4.5, {align:'right'});
+if(row.v3!==''){ doc.text(row.v3||'—', margin+c3W*3-4, y+4.5, {align:'right'}); }
+y += cRH;
+});
+y += 8;
+
+// ── PIED DE PAGE ─────────────────────────────────────────
+stroke(C.border); doc.setLineWidth(0.4);
+doc.line(margin, y, pageW-margin, y);
+doc.setFont('helvetica','normal'); doc.setFontSize(6.5); textC(C.pale);
+doc.text('Enright PL, Sherrill DL. Reference equations for the six-minute walk in healthy adults. Am J Respir Crit Care Med. 1998;158(5):1384-1387', margin, y+5);
+
+var fileName='TM6_NB_'+r.patientName.replace(/\s+/g,'_')+'.pdf';
+if(currentDossierId){
+var dossiers=getDossiers();
+var dossier=dossiers.find(function(d){return d.id===currentDossierId;});
+if(dossier) fileName='TM6_NB_'+dossier.name+'.pdf';
+}
+doc.save(fileName);
+}
+// === FIN PDF NOIR & BLANC ===
+</script>
+
+<!-- === MODAL EDITION DOSSIER === -->
+<div id="editDossierModal" class="modal-ov" style="z-index:2000">
+<div class="modal-box" style="max-width:480px;width:95%;max-height:90vh;overflow-y:auto;padding:20px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+<div style="font-family:'DM Serif Display',serif;font-size:15px;color:#fff">✏️ Modifier le dossier</div>
+<button class="btn btn-o" style="padding:4px 8px;font-size:9px" onclick="closeEditDossier()">✕</button>
+</div>
+<!-- Patient -->
+<div class="card cb" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot b"></span>Patient</div>
+<div class="g2">
+<div><div class="lbl">Nom</div><input class="inp" type="text" id="edit_name" placeholder="Nom"></div>
+<div><div class="lbl">Âge (ans)</div><input class="inp" type="number" id="edit_age" placeholder="—" min="1" max="120"></div>
+</div>
+<div class="g2" style="margin-top:6px">
+<div><div class="lbl">Taille (cm)</div><input class="inp" type="number" id="edit_height" placeholder="—"></div>
+<div><div class="lbl">Poids (kg)</div><input class="inp" type="number" id="edit_weight" placeholder="—"></div>
+</div>
+<div style="margin-top:8px"><div class="lbl" style="margin-bottom:4px">Sexe</div>
+<div style="display:flex;gap:6px">
+<button id="edit_btnM" class="sx" onclick="setEditSex('M')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><circle cx="10" cy="14" r="5"/><line x1="19" y1="5" x2="14.14" y2="9.86"/><polyline points="15 5 19 5 19 9"/></svg>Homme</button>
+<button id="edit_btnF" class="sx" onclick="setEditSex('F')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><circle cx="12" cy="9" r="5"/><line x1="12" y1="14" x2="12" y2="21"/><line x1="9" y1="18" x2="15" y2="18"/></svg>Femme</button>
+</div></div>
+</div>
+<!-- Aide technique -->
+<div class="card ca" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot a"></span>Aide technique à la marche</div>
+<div style="display:flex;gap:6px;margin-bottom:8px">
+<button class="tog-btn active" id="edit_togAideNon" onclick="setEditAide(false)">Non</button>
+<button class="tog-btn" id="edit_togAideOui" onclick="setEditAide(true)">Oui</button>
+</div>
+<div id="edit_aideOptions" style="display:none">
+<div class="check-group">
+<label class="chk-lbl"><input type="radio" name="edit_aideType" value="Canne simple"> Canne simple</label>
+<label class="chk-lbl"><input type="radio" name="edit_aideType" value="Canne anglaise"> Canne anglaise</label>
+<label class="chk-lbl"><input type="radio" name="edit_aideType" value="Déambulateur"> Déambulateur</label>
+<label class="chk-lbl"><input type="radio" name="edit_aideType" value="Déambulateur 2 roues"> Déambulateur 2 roues</label>
+<label class="chk-lbl"><input type="radio" name="edit_aideType" value="Déambulateur 4 roues"> Déambulateur 4 roues</label>
+</div>
+</div>
+</div>
+<!-- O² -->
+<div class="card cg" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot g"></span>Dispositif O²</div>
+<div style="display:flex;gap:6px;margin-bottom:8px">
+<button class="tog-btn active" id="edit_togO2Non" onclick="setEditO2(false)">Non</button>
+<button class="tog-btn" id="edit_togO2Oui" onclick="setEditO2(true)">Oui</button>
+</div>
+<div id="edit_o2Options" style="display:none">
+<div class="check-group" style="margin-bottom:8px">
+<label class="chk-lbl"><input type="radio" name="edit_o2Type" id="edit_o2Continu" value="Continu" onchange="onEditO2TypeChange()"> O² Continu</label>
+<label class="chk-lbl"><input type="radio" name="edit_o2Type" id="edit_o2Pulse" value="Pulse" onchange="onEditO2TypeChange()"> O² Pulsé</label>
+</div>
+<div id="edit_o2ContinuFields" style="display:none">
+<div class="g2">
+<div><div class="lbl"><span class="dot a"></span>Débit (L/min)</div><input class="inp" id="edit_o2Debit" type="number" placeholder="2" min="0" max="15" step="0.5"></div>
+<div><div class="lbl"><span class="dot a"></span>Modèle</div><input class="inp" id="edit_o2ModeleContinu" type="text" placeholder="ex: FREELOX..."></div>
+</div>
+</div>
+<div id="edit_o2PulseFields" style="display:none">
+<div class="g2">
+<div><div class="lbl"><span class="dot a"></span>Consigne</div><input class="inp" id="edit_o2Consigne" type="number" placeholder="3" min="1" max="9"></div>
+<div><div class="lbl"><span class="dot a"></span>Modèle</div><input class="inp" id="edit_o2ModelePulse" type="text" placeholder="ex: INOGEN..."></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Distance -->
+<div class="card cg" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot g"></span>Distance parcourue</div>
+<div class="g3">
+<div><div class="lbl">Tours</div><input class="inp" type="number" id="edit_tours" placeholder="0" min="0" oninput="updateEditTotal()"></div>
+<div><div class="lbl">Dist/tour (m)</div><input class="inp" type="number" id="edit_lapdist" placeholder="30" min="1" oninput="updateEditTotal()"></div>
+<div><div class="lbl">Partiel (m)</div><input class="inp" type="number" id="edit_partial" placeholder="0" min="0" oninput="updateEditTotal()"></div>
+</div>
+<div style="margin-top:8px;background:var(--sur2);border:1px solid var(--brd);border-radius:7px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--mut)">DISTANCE TOTALE</span>
+<span style="font-family:'DM Mono',monospace;font-size:18px;color:var(--grn2)" id="editTotalDist">— m</span>
+</div>
+</div>
+<!-- Monitoring -->
+<div class="card ca" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot a"></span>Monitoring SpO₂ / FC</div>
+<div class="mon-wrap"><table class="mon-t">
+<thead><tr><th>Temps</th><th>SpO2 (%)</th><th>FC (bpm)</th></tr></thead>
+<tbody id="editMonBody"></tbody>
+</table></div>
+<div class="g2" style="margin-top:8px">
+<div><div class="lbl">SpO2 récup (%)</div><input class="inp" type="number" id="edit_spo2_recov" placeholder="—" min="70" max="100"></div>
+<div><div class="lbl">FC récup (bpm)</div><input class="inp" type="number" id="edit_fc_recov" placeholder="—" min="30" max="220"></div>
+</div>
+</div>
+<!-- Dyspnée -->
+<div class="card" style="margin-bottom:8px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot p"></span>Dyspnée (Borg)</div>
+<div class="g2">
+<div><div class="lbl">Avant</div><input class="inp" type="number" id="edit_dysp_pre" placeholder="—" min="0" max="10" step="0.5"></div>
+<div><div class="lbl">Après</div><input class="inp" type="number" id="edit_dysp_post" placeholder="—" min="0" max="10" step="0.5"></div>
+</div>
+</div>
+<!-- Remarques -->
+<div class="card" style="margin-bottom:14px">
+<div class="lbl" style="margin-bottom:6px"><span class="dot b"></span>Remarques</div>
+<textarea class="inp" id="edit_remarks" rows="3" placeholder="Notes cliniques…" style="resize:vertical;font-family:'Sora',sans-serif;font-size:12px;line-height:1.5;width:100%"></textarea>
+</div>
+<div style="display:flex;gap:8px;justify-content:flex-end">
+<button class="btn btn-o" onclick="closeEditDossier()">Annuler</button>
+<button class="btn btn-g" onclick="saveEditDossier()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Sauvegarder</button>
+</div>
+</div>
+</div>
+<!-- === FIN MODAL EDITION === -->
+
+<script>
+// === EDITION DOSSIER ===
+var editSex = null;
+var editAideActive = false;
+var editO2Active = false;
+var MON_LABELS_EDIT = ['Repos','Min 1','Min 2','Min 3','Min 4','Min 5','Min 6'];
+
+function setEditAide(state){
+editAideActive = state;
+document.getElementById('edit_togAideNon').className = 'tog-btn' + (state ? '' : ' active');
+document.getElementById('edit_togAideOui').className = 'tog-btn' + (state ? ' active' : '');
+document.getElementById('edit_aideOptions').style.display = state ? 'block' : 'none';
+if(!state){ document.querySelectorAll('input[name="edit_aideType"]').forEach(function(r){r.checked=false;}); }
+}
+
+function setEditO2(state){
+editO2Active = state;
+document.getElementById('edit_togO2Non').className = 'tog-btn' + (state ? '' : ' active');
+document.getElementById('edit_togO2Oui').className = 'tog-btn' + (state ? ' active' : '');
+document.getElementById('edit_o2Options').style.display = state ? 'block' : 'none';
+if(!state){
+document.querySelectorAll('input[name="edit_o2Type"]').forEach(function(r){r.checked=false;});
+onEditO2TypeChange();
+}
+}
+
+function onEditO2TypeChange(){
+var cont = document.getElementById('edit_o2Continu');
+var puls = document.getElementById('edit_o2Pulse');
+document.getElementById('edit_o2ContinuFields').style.display = (cont && cont.checked) ? 'block' : 'none';
+document.getElementById('edit_o2PulseFields').style.display  = (puls && puls.checked) ? 'block' : 'none';
+}
+
+function getEditAideData(){
+if(!editAideActive) return {aide:'Non', aideType:''};
+var checked = document.querySelector('input[name="edit_aideType"]:checked');
+return {aide:'Oui', aideType: checked ? checked.value : ''};
+}
+
+function getEditO2Data(){
+if(!editO2Active) return {o2:'Non', o2Type:'', o2Debit:'', o2Consigne:'', o2Modele:''};
+var cont = document.getElementById('edit_o2Continu');
+var puls = document.getElementById('edit_o2Pulse');
+if(cont && cont.checked) return {o2:'Oui', o2Type:'Continu', o2Debit: document.getElementById('edit_o2Debit').value||'', o2Consigne:'', o2Modele: document.getElementById('edit_o2ModeleContinu').value||''};
+if(puls && puls.checked) return {o2:'Oui', o2Type:'Pulse', o2Debit:'', o2Consigne: document.getElementById('edit_o2Consigne').value||'', o2Modele: document.getElementById('edit_o2ModelePulse').value||''};
+return {o2:'Oui', o2Type:'', o2Debit:'', o2Consigne:'', o2Modele:''};
+}
+
+
+function buildEditMonTable(){
+var html = '';
+MON_LABELS_EDIT.forEach(function(lbl, i){
+html += '<tr><td>'+lbl+'</td>'
++'<td><input type="number" id="edit_sp_'+i+'" placeholder="—" min="70" max="100"></td>'
++'<td><input type="number" id="edit_fc_'+i+'" placeholder="—" min="30" max="220"></td></tr>';
+});
+document.getElementById('editMonBody').innerHTML = html;
+}
+
+function setEditSex(s){
+editSex = s;
+document.getElementById('edit_btnM').className = 'sx' + (s==='M'?' am':'');
+document.getElementById('edit_btnF').className = 'sx' + (s==='F'?' af':'');
+}
+
+function updateEditTotal(){
+var tours = parseInt(document.getElementById('edit_tours').value) || 0;
+var lapd  = parseFloat(document.getElementById('edit_lapdist').value) || 0;
+var part  = parseFloat(document.getElementById('edit_partial').value) || 0;
+document.getElementById('editTotalDist').textContent = (tours * lapd + part) + ' m';
+}
+
+function openEditDossier(){
+if(!currentDossierId) return;
+var dossiers = getDossiers();
+var dossier = dossiers.find(function(d){ return d.id === currentDossierId; });
+if(!dossier) return;
+var r = dossier.data;
+buildEditMonTable();
+// Patient
+document.getElementById('edit_name').value   = r.patientName || '';
+document.getElementById('edit_age').value    = r.age || '';
+document.getElementById('edit_height').value = r.height || '';
+document.getElementById('edit_weight').value = r.weight || '';
+setEditSex(r.sex || null);
+// Distance
+document.getElementById('edit_tours').value   = r.lapsCount || 0;
+document.getElementById('edit_lapdist').value = r.lapDist || 30;
+document.getElementById('edit_partial').value = r.partial || 0;
+updateEditTotal();
+// Monitoring
+if(r.monData){
+r.monData.forEach(function(row, i){
+var sp = document.getElementById('edit_sp_'+i);
+var fc = document.getElementById('edit_fc_'+i);
+if(sp) sp.value = row.spo2 || '';
+if(fc) fc.value = row.fc   || '';
+});
+}
+var sr = document.getElementById('edit_spo2_recov');
+var fr = document.getElementById('edit_fc_recov');
+if(sr) sr.value = r.spo2_recov || '';
+if(fr) fr.value = r.fc_recov   || '';
+// Dyspnée & Remarques
+document.getElementById('edit_dysp_pre').value  = r.dysp_pre  || '';
+document.getElementById('edit_dysp_post').value = r.dysp_post || '';
+document.getElementById('edit_remarks').value   = dossier.remarks || r.remarks || '';
+// Aide technique
+var aideOui = r.aide === 'Oui';
+setEditAide(aideOui);
+if(aideOui && r.aideType){
+var aideRad = document.querySelector('input[name="edit_aideType"][value="'+r.aideType+'"]');
+if(aideRad) aideRad.checked = true;
+}
+// O²
+var o2Oui = r.o2 === 'Oui';
+setEditO2(o2Oui);
+if(o2Oui && r.o2Type){
+var o2TypeVal = r.o2Type === 'Continu' ? 'Continu' : (r.o2Type === 'Pulse' ? 'Pulse' : '');
+if(o2TypeVal){
+var o2Rad = document.querySelector('input[name="edit_o2Type"][value="'+o2TypeVal+'"]');
+if(o2Rad){ o2Rad.checked = true; onEditO2TypeChange(); }
+if(r.o2Type === 'Continu'){
+document.getElementById('edit_o2Debit').value = r.o2Debit || '';
+document.getElementById('edit_o2ModeleContinu').value = r.o2Modele || '';
+} else {
+document.getElementById('edit_o2Consigne').value = r.o2Consigne || '';
+document.getElementById('edit_o2ModelePulse').value = r.o2Modele || '';
+}
+}
+}
+// Ouvrir modale
+document.getElementById('editDossierModal').classList.add('show');
+}
+
+function closeEditDossier(){
+document.getElementById('editDossierModal').classList.remove('show');
+}
+
+function saveEditDossier(){
+if(!currentDossierId) return;
+var dossiers = getDossiers();
+var idx = dossiers.findIndex(function(d){ return d.id === currentDossierId; });
+if(idx < 0) return;
+var dossier = dossiers[idx];
+var r = dossier.data;
+// Lire les champs
+var patientName = document.getElementById('edit_name').value.trim()   || r.patientName;
+var age    = parseFloat(document.getElementById('edit_age').value)    || r.age;
+var height = parseFloat(document.getElementById('edit_height').value) || r.height;
+var weight = parseFloat(document.getElementById('edit_weight').value) || r.weight;
+var sex    = editSex || r.sex;
+var tours   = parseInt(document.getElementById('edit_tours').value)   || 0;
+var lapDist = parseFloat(document.getElementById('edit_lapdist').value) || 0;
+var partial = parseFloat(document.getElementById('edit_partial').value) || 0;
+var distance = tours * lapDist + partial;
+var dysp_pre  = document.getElementById('edit_dysp_pre').value  || '';
+var dysp_post = document.getElementById('edit_dysp_post').value || '';
+var spo2_recov = document.getElementById('edit_spo2_recov').value || '';
+var fc_recov   = document.getElementById('edit_fc_recov').value   || '';
+var remarks = document.getElementById('edit_remarks').value || '';
+var aideData = getEditAideData();
+var o2Data   = getEditO2Data();
+// Monitoring
+var monData = MON_LABELS_EDIT.map(function(lbl, i){
+var sp = document.getElementById('edit_sp_'+i);
+var fc = document.getElementById('edit_fc_'+i);
+return { label: lbl, spo2: sp ? sp.value : '', fc: fc ? fc.value : '' };
+});
+// Recalcul
+var eq  = EQ[sex];
+var pred = eq.calc(age, height, weight);
+var sd   = eq.sd;
+var pct  = distance > 0 ? (distance / pred) * 100 : 0;
+var ecart  = distance - pred;
+var limInf = pred - sd;
+var lin = pred - 2*sd;
+var lsn = pred + 2*sd;
+var imc = (weight / Math.pow(height / 100, 2)).toFixed(1);
+var stoppedAt = r.stoppedAt || null;
+var vitKmh = distance > 0 ? ((distance / (stoppedAt || 360)) * 3.6).toFixed(1) + ' km/h' : '—';
+// Mise à jour du dossier
+dossier.patientName = patientName;
+dossier.remarks = remarks;
+dossier.data = Object.assign({}, r, {
+patientName: patientName, sex: sex, age: age, height: height, weight: weight, imc: imc,
+distance: distance, pred: pred, pct: pct, ecart: ecart, sd: sd, lin: lin, lsn: lsn, limInf: limInf,
+lapsCount: tours, lapDist: lapDist, partial: partial, tourDist: tours * lapDist,
+dysp_pre: dysp_pre, dysp_post: dysp_post,
+spo2_recov: spo2_recov, fc_recov: fc_recov,
+monData: monData, vitKmh: vitKmh, remarks: remarks,
+aide: aideData.aide, aideType: aideData.aideType,
+o2: o2Data.o2, o2Type: o2Data.o2Type, o2Debit: o2Data.o2Debit, o2Consigne: o2Data.o2Consigne, o2Modele: o2Data.o2Modele
+});
+dossiers[idx] = dossier;
+saveDossiers(dossiers);
+closeEditDossier();
+lastResults = dossier.data;
+openDossier(currentDossierId);
+loadDossiers();
+showToast('Dossier mis à jour ✓', 'ok');
+if(navigator.vibrate) navigator.vibrate([50,30,50]);
+}
+
+// Fermer avec Echap
+document.addEventListener('keydown', function(e){
+if(e.key === 'Escape'){
+var m = document.getElementById('editDossierModal');
+if(m && m.classList.contains('show')) closeEditDossier();
+}
+});
+// === FIN EDITION DOSSIER ===
+</script>
 </body>
 </html>
